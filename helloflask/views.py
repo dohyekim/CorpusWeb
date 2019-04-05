@@ -15,6 +15,7 @@ def main():
 
 @app.route('/tags')
 def tags():
+    # tags = Talk.query.filter(Talk.id == talkid)
     tags = Talk.query.first()
     # print(tags)
     # tag = {"tags":tags}
@@ -24,18 +25,14 @@ def tags():
 
 @app.route('/korsearch/<searchwords>')
 def ksearchjson(searchwords):
-    # searchwords = request.args.get("ksearchwords")
     s = ElasticSearch()
-    s.kortoEng(searchwords)
-    searchres = s.kortoEngequiv()
+    searchres = s.kortoEngequiv(searchwords)
     return jsonify(searchres)
 
 
 @app.route('/engsearch/<searchwords>')
 def esearchjson(searchwords):
-    # searchwords = request.args.get("ksearchwords")
     s = ElasticSearch()
-    s.engtoKor(searchwords)
-    searchres = s.engtoKorequiv()
+    searchres = s.engtoKorequiv(searchwords)
     return jsonify(searchres)
 

@@ -1,0 +1,104 @@
+      {% raw %}
+      <script id="entry-template" type="text/x-handlebars-template">
+        <ul>
+            {{#each data}}
+          <div>
+            <li>
+              <div class="row">
+                <div class="col-6">
+                  {{korsentences}} <br>
+                  {{result}}
+                </div>
+
+                <div class="col-6">
+                  <!-- Card -->
+                  <div class="card">
+                    <!-- Card content -->
+                    <div class="card-body">
+                
+                      <!-- Title -->
+                      <div class="form-inline">
+                        <h6 class="card-title">Tags</h6>
+                        
+                        <!-- Text -->
+                        {{#if isShowTags}}
+                        <p class="card-text">
+                          {{#each tags}}
+                          // tags에 key가 없어서 this 사용
+                            <span id="tag{{@index}}" class="badge badge-pill badge-default">{{this}}</span>
+                          {{/each}}
+                        </p>
+
+                        {{else}}
+                          <!-- Button -->
+                          <a onclick="showTags({{tid}}, {{cue}})" class="btn btn-sm btn-default ml-5">
+                            Click <i class="fas fa-magic ml-1"></i>
+                          </a>
+                        {{/if}}
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <!-- Card -->
+                </div>
+              </div>
+              
+
+              
+            </li>
+
+          </div>
+          {{/each}}
+        </ul>
+      </script>
+      {% endraw %}
+
+
+<script>
+        var currentData = null;
+
+function showTags(tid, cue) {
+    var d = currentData.find( function(t) { return t.cue == cue && t.tid== tid });
+    d.isShowTags = true;
+    // {data: currentData}가 표준, {currentData}도 가능하지만 표준을 사용하는 게 좋다.
+    render(dataTemplate, {data:currentData}, 'result')
+  }
+  
+
+var dataTemplate = null;
+function hbs(sourceId, data, resultId) {
+    var source = document.getElementById(sourceId).innerHTML;
+    var template = Handlebars.compile(source);
+// dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
+    if (resultId === 'result')
+      dataTemplate = template;
+   render(template, data, resultId)
+}
+
+function render(template, data, resultId) {
+  document.getElementById(resultId).innerHTML = template(data);
+}
+
+
+$('#korsearch').click( function() {
+  var s = $('#ksearchwords').val()
+  if (!s) {
+    alert("다시 입력하세요!")
+  }
+  else {
+    $.ajax({
+      url: '/korsearch/' + $('#ksearchwords').val(),
+      type: 'GET'
+    }).done(function(data) {
+      console.log("data>>>>>", data)
+      console.log("length>>>", data.length)
+      currentData = data;
+      // data:currentData
+      hbs("entry-template", {data:currentData}, 'result')
+    }).fail(function(res) {
+        console.log("Error!!", res)
+    })
+  }
+})
+
+</script>
