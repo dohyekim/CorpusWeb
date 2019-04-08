@@ -1,0 +1,194 @@
+{%extends 'layout.htm'%}
+{%block main%}
+
+
+  <!--Main layout-->
+  <main class="mt-5 pt-5">
+        <div class="container text-center col-8">
+    
+          <!--Section: Jumbotron-->
+          <section class="card wow fadeIn" style="background-image: url(https://mdbootstrap.com/img/Photos/Others/gradient1.jpg);">
+            <!-- Content -->
+            <div class="card-body text-white text-center py-5 px-5 my-5">
+    
+              <h1 class="mb-4">
+                <strong>Not sure about your words? <br> 
+                  Check out at MyCorpus !</strong>
+              </h1>
+              <p>
+                <strong>Real-World English from TED.com</strong>
+              </p>
+    
+            </div>
+            <!-- Content -->
+          </section>
+    
+          <!--Section: Jumbotron-->
+    
+          <hr class="my-5">
+          <!-- 한/영 영/한-->
+    
+          <ul class="nav nav-pills mb-3" id="pills-koreng-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="pills-koreng-tab" data-toggle="pill" href="#pills-home" role="tab"
+                aria-controls="pills-home" aria-selected="true">비교 검색</a>
+            </li>
+          </ul>
+
+            <!-- 영한 -->
+        <div class="row">
+            <div class="md-form form-inline col">
+                <input id="efsearchwords" name="esearchwords" type="text" value="thank you" class="w-75" placeholder='write words or phrases.' aria-describedby="MaterialButton-addon2">
+                <button id="efsearch" class="btn btn-md btn-secondary ml-4 m-0 px-3" type="button" >검색</button>
+            </div>
+            <div class="md-form form-inline col">
+                <input id="essearchwords" name="esearchwords" type="text" value="thank you" class="w-75" placeholder='write words or phrases..' aria-describedby="MaterialButton-addon2">
+                <button id="essearch" class="btn btn-md btn-secondary ml-4 m-0 px-3" type="button" >검색</button>
+            </div>
+            <div class="w-100"></div>
+            <div id="efcount" class="col">개</div>
+            <div id="efresult" class="col">Searchresult</div>    
+            <div id="escount" class="col">개</div>
+            <div id="esresult" class="col">Searchresult</div>     
+        </div>
+    <!-- 영/한 검색 결과 -->
+              <div class="container text-center">
+                  <div class="row">
+                    <div class="text-center">
+                      <div id="engresult">
+                      </div>
+                    </div>  
+                  </div>
+                </div>
+
+
+  
+        {% raw %}
+        <script id="entry-template" type="text/x-handlebars-template">
+          <ol type="1">
+              {{#each data}}
+            <div>
+              <li>
+                  <div class="text-left">
+                    {{#if korsentences}}
+                        {{korsentences}} 
+                    {{else}}
+                        {{engsentences}}
+                    {{/if}}
+                    <br> 
+                    {{result}}
+                  </div>
+              </li>
+            </div>
+            {{/each}}
+          </ol>
+        </script>
+        {% endraw %}
+  
+  
+          <!--Pagination-->
+          <nav class="d-flex justify-content-center wow fadeIn">
+            <ul class="pagination pg-blue">
+  
+              <!--Arrow left-->
+              <li class="page-item disabled">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                  <span class="sr-only">Previous</span>
+                </a>
+              </li>
+  
+              <li class="page-item active">
+                <a class="page-link" href="#">현재</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <!--Pagination-->
+  
+  
+  
+  
+    </main>
+    <!--Main layout-->  
+<script>
+    var currentData = null;
+    var dataTemplate = null;
+ 
+    function hbs(sourceId, data, resultId) {
+        var source = document.getElementById(sourceId).innerHTML;
+        var template = Handlebars.compile(source);
+        if (resultId === 'kfresult'){
+            dataTemplate = template;
+        }
+        else {
+            dtTemplate = template;
+        }
+        
+        render(template, data, resultId)
+        }
+        
+    function render(template, data, resultId) {
+    document.getElementById(resultId).innerHTML = template(data);
+    }
+        
+
+    // foreRes 
+
+    $('#efsearch').click( function() {
+        var cnt = null;
+        var s = $('#efsearchwords').val();
+        if (!s) {
+        alert("다시 입력하세요!")
+        }
+        else {
+        $.ajax({
+            url: '/engsearch/' + s,
+            type: 'GET'
+        }).done(function(data) {
+            console.log("data>>>>>", data)
+            var cnt = data.length;
+            var cntt = $('#efcount');
+            cntt.text(cnt + '개')
+            console.log("1 cnt>>>>>>>", cnt)
+            console.log("length>>>", data.length)
+            currentData = data;
+            // data:currentData
+            hbs("entry-template", {data:currentData}, 'efresult')
+        }).fail(function(res) {
+            console.log("Error!!", res)
+        });
+        }
+    });
+    
+
+
+
+    $('#essearch').click( function() {
+        var s = $('#essearchwords').val()
+        if (!s) {
+        alert("다시 입력하세요!")
+        }
+        else {
+        $.ajax({
+            url: '/engsearch/' + s,
+            type: 'GET'
+        }).done(function(data) {
+            console.log("data>>>>>", data)
+            console.log("length>>>", data.length)
+            currentData = data;
+            hbs("entry-template", {data:currentData}, 'esresult')
+        }).fail(function(res) {
+            console.log("Error!!", res)
+        })
+        }
+    })
+</script>
+
+
+{%endblock main%}

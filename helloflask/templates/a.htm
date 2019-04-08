@@ -1,16 +1,27 @@
       {% raw %}
       <script id="entry-template" type="text/x-handlebars-template">
-        <ul>
+        <ol type="1">
             {{#each data}}
           <div>
             <li>
               <div class="row">
-                <div class="col-6">
-                  {{korsentences}} <br>
+                <div class="col-8 text-left">
+                  <span class="foresentence{{@index}}">
+                    <button id="foresentence{{@index}}" onclick='showFore("{{escp foresentence}}", "foresentence{{@index}}")'>...</button>
+                  </span>
+                  {{#if korsentences}}
+                  {{korsentences}}
+                  {{else}}
+                  {{engsentences}}
+                  <span class="lastsentence{{@index}}">
+                    <button id="lastsentence{{@index}}" onclick='showLast("{{escp foresentence}}", "lastsentence{{@index}}")'>...</button>
+                  </span>
+                  <br> 
+                  {{/if}}
                   {{result}}
                 </div>
 
-                <div class="col-6">
+                <div class="col-4"> 
                   <!-- Card -->
                   <div class="card">
                     <!-- Card content -->
@@ -18,21 +29,19 @@
                 
                       <!-- Title -->
                       <div class="form-inline">
-                        <h6 class="card-title">Tags</h6>
+                        <h6 class="card-title">Tags</h6> <br>
                         
                         <!-- Text -->
                         {{#if isShowTags}}
                         <p class="card-text">
                           {{#each tags}}
-                          // tags에 key가 없어서 this 사용
                             <span id="tag{{@index}}" class="badge badge-pill badge-default">{{this}}</span>
                           {{/each}}
                         </p>
-
                         {{else}}
                           <!-- Button -->
-                          <a onclick="showTags({{tid}}, {{cue}})" class="btn btn-sm btn-default ml-5">
-                            Click <i class="fas fa-magic ml-1"></i>
+                          <a onclick="showTags({{tid}}, {{cue}}, '{{lang}}')" class="btn btn-sm btn-default ml-5">
+                            Click<i class="fas fa-magic ml-1"></i>
                           </a>
                         {{/if}}
                       </div>
@@ -42,16 +51,14 @@
                   <!-- Card -->
                 </div>
               </div>
-              
-
-              
+              <br>
             </li>
-
           </div>
           {{/each}}
-        </ul>
+        </ol>
       </script>
       {% endraw %}
+
 
 
 <script>

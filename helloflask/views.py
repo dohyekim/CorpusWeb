@@ -13,15 +13,19 @@ def main():
 
     return render_template('main.htm', title="Main")
 
-@app.route('/tags')
-def tags():
-    # tags = Talk.query.filter(Talk.id == talkid)
-    tags = Talk.query.first()
-    # print(tags)
-    # tag = {"tags":tags}
-    # print(type(tags))
-    # print(tags.tags)
-    return jsonify(tags.json())
+# @app.route('/tags')
+# def tags():
+#     # tags = Talk.query.filter(Talk.id == talkid)
+#     tags = Talk.query.first()
+#     # print(tags)
+#     # tag = {"tags":tags}
+#     # print(type(tags))
+#     # print(tags.tags)
+#     return jsonify(tags.json())
+
+@app.route('/compare')
+def compare():
+    return render_template('compare.htm')
 
 @app.route('/korsearch/<searchwords>')
 def ksearchjson(searchwords):

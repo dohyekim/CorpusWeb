@@ -32,7 +32,9 @@ class ElasticSearch():
     def engtoKor(self, search):
         self.engtalk = []
         engsentences = []
-        for t in range(1, 10):
+        # foresentence = []
+        # lastsentence = []
+        for t in range(600, 610):
             if (t,) in self.diffs:
                 continue
             # 검색
@@ -60,59 +62,29 @@ class ElasticSearch():
                     cue = row[0]
                     self.engtalk.append((t, cue))
                     sentence = ''
-                    sqleng = 'select eng from English where engcue between {} and {} and talk_id = {}'.format(cue-1, cue+1, t)
+                    sqleng = 'select eng from English where engcue between {} and {} and talk_id = {}'.format(cue-2, cue+2, t)
                     # print(sqlss)
                     cur = conn.cursor()
                     cur.execute(sqleng)
                     rows2 = cur.fetchall()
                     cur.close()
                     # print(rows2)
-                    for r in rows2:
-                        sentence += (r[0]+' ')
+                    foresentence = ' '
+                    lastsentence = ' '
+                    for idx, r in enumerate(rows2):
+                        if idx == 0:
+                            foresentence = r
+                        elif idx == len(r) - 1:
+                            lastsentence = r
+                        else:
+                            sentence += (r[0]+' ')
                     # print(sentence)
-                    engsentences.append(sentence)
-        pprint(engsentences)
+                    sentences = {'foresentence' : foresentence, 'sentence':sentence, 'lastsentence' : lastsentence}
+                    engsentences.append(sentences)
+        print("engsentences>>>>>>", engsentences)
+
         return engsentences        
-        # # 전체 row 수만큼 loop 돌리도록 수정(int(self.talkcnt)+1)
-        # for t in range(1, 20):
-        #     if (t,) in self.diffs:
-        #         continue
 
-        #     # 검색
-        #     s = ''
-        #     s = search[0]
-        #     sqlEngSearch = '''select engcue from English 
-        #                 where eng regexp '([{}{}]{})'
-        #                 and talk_id = {}'''.format(s.lower(), s.upper(), search[1:], t)
-        #     # sqlEngSearch = '''select engcue from English 
-        #     #                     where eng like '%{}%'
-        #     #                     and talk_id = {}'''.format(search, t)
-        #     conn = f.get_conn()
-        #     cur = conn.cursor()
-        #     cur.execute(sqlEngSearch)
-        #     rows = cur.fetchall()
-        #     cur.close()
-
-        #     # 검색어가 없는 경우
-        #     if len(rows) == 0:
-        #         continue
-        #     # 검색어가 있는 경우
-        #     else:
-        #         for row in rows:
-        #             cue = row[0]
-        #             self.engtalk.append((t, cue))
-        #             sentence = ''
-        #             sqleng = 'select eng from English where engcue between {} and {} and talk_id = {}'.format(cue-1, cue+1, t)
-        #             # print(sqlss)
-        #             cur = conn.cursor()
-        #             cur.execute(sqleng)
-        #             rows2 = cur.fetchall()
-        #             cur.close()
-        #             # print(rows2)
-        #             for r in rows2:
-        #                 sentence += (r[0]+' ')
-        #             # print(sentence)
-        #             self.engsentences.append(sentence)
     def engtoKorequiv(self, search):
         engsentences = self.engtoKor(search)
         tshows = []
@@ -129,13 +101,13 @@ class ElasticSearch():
             if cue == 1:
                 sqlKorSearch = '''select kor from Korean 
                     where korcue between {} and {}
-                    and talk_id = {}'''.format(cue, cue+2, tid)
+                    and talk_id = {}'''.format(cue, cue+3, tid)
 
             # 첫 문장이 아닌 경우
             else:     
                 sqlKorSearch = '''select kor from Korean 
                     where korcue between {} and {}
-                    and talk_id = {}'''.format(cue-1, cue+1, tid)
+                    and talk_id = {}'''.format(cue-2, cue+2, tid)
 
             conn = f.get_conn()
             cur = conn.cursor()
@@ -149,9 +121,19 @@ class ElasticSearch():
             
 
             # 세 개의 문장을 하나의 string으로 만들기
-            for i in a:
-                strs += i + ' '
-            show = {'number' : n, 'tid' : tid, 'cue':cue, 'engsentences':engsentences[e], 'result':strs, 'isShowTags': False, 'lang': lang}
+            foreresult = ' '
+            lastresult = ' '
+            for idx, i in enumerate(a):
+                if idx == 0:
+                    foreresult = i
+                elif idx == len(a) -1 :
+                    lastresult = i
+                else:
+                    strs += i + ' '
+            show = {'number' : n, 'tid' : tid, 'cue':cue, 'engsentences':engsentences[e]['sentence'], 'foreresult':foreresult, 'lastresult':lastresult, 'result':strs, 'lang': lang,
+                    'foresentence':engsentences[e]['foresentence'][0], 'lastsentence':engsentences[e]['lastsentence'][0]}
+            # print(show)
+            # return
 
              # tags 가져오기
             tagSearch = 'select tags from Talk where talk_id = {}'.format(tid)
@@ -159,20 +141,24 @@ class ElasticSearch():
             cur.execute(tagSearch)
             tagrows = cur.fetchall()
             cur.close()
-            print("tt>>", tagrows)
+            # print("tt>>", tagrows)
 
             show['tags'] = tagrows[0][0].split(',')
             tshows.append(show)
+            # sort_students = sorted(students, key = lambda stu: stu.score)
+            # tshows.sort(reverse=True)
+            # dic = sorted(dic.items(), key=lambda d: d[1]['ranking'])
+            tshowss = sorted(tshows, key = lambda t:t['number'], reverse=True)
             n+=1
-        print(tshows)
+        print(tshowss)
 
-        return tshows
+        return tshowss
 
     def kortoEng(self, search):
         self.kortalk = []
         korsentences = []
         # int(self.talkcnt)+1
-        for t in range(1, 10):
+        for t in range(600, 610):
             if (t,) in self.diffs:
                 continue
 
@@ -195,18 +181,28 @@ class ElasticSearch():
                     cue = row[0]
                     self.kortalk.append((t, cue))
                     sentence = ''
-                    sqlkor = 'select kor from Korean where korcue between {} and {} and talk_id = {}'.format(cue-1, cue+1, t)
+                    sqlkor = 'select kor from Korean where korcue between {} and {} and talk_id = {}'.format(cue-2, cue+2, t)
                     # print(sqlss)
                     cur = conn.cursor()
                     cur.execute(sqlkor)
                     rows2 = cur.fetchall()
                     cur.close()
                     # print(rows2)
-                    for r in rows2:
-                        sentence += (r[0]+' ')
+                    foresentence = ' '
+                    lastsentence = ' '
+
+                    for idx, r in enumerate(rows2):
+                        if idx == 0:
+                            foresentence = r
+                        elif idx == len(rows2) - 1:
+                            lastsentence = r
+                        else:
+                            sentence += (r[0]+' ')
+                        
                     # print(sentence)
-                    korsentences.append(sentence)
-        
+                    sentences = {'foresentence' : foresentence, 'sentence':sentence, 'lastsentence' : lastsentence}
+                    korsentences.append(sentences)
+        # print("korsentences>>>>>>", korsentences)
         return korsentences
 
     def kortoEngequiv(self, search):
@@ -216,6 +212,7 @@ class ElasticSearch():
         tags = []
         n=1
 
+        # print("kkkkkkkkkkk>", self.kortalk)
         for k, kort in enumerate(self.kortalk):
             strs = ''
             cue = kort[1]
@@ -225,31 +222,51 @@ class ElasticSearch():
             if cue == 1:
                 sqlEngSearch = '''select eng from English 
                     where engcue between {} and {}
-                    and talk_id = {}'''.format(cue, cue+2, tid)
+                    and talk_id = {}'''.format(cue, cue+3, tid)
 
             # 첫 문장이 아닌 경우
             else:     
                 sqlEngSearch = '''select eng from English 
                     where engcue between {} and {}
-                    and talk_id = {}'''.format(cue-1, cue+1, tid)
+                    and talk_id = {}'''.format(cue-2, cue+2, tid)
 
             conn = f.get_conn()
             cur = conn.cursor()
             cur.execute(sqlEngSearch)
-            enrows = cur.fetchall() # tuple
+            enrows = cur.fetchall()
+            # print(sqlEngSearch) # tuple
             cur.close()
+            # print("en>>>>", enrows)
             
            
             
             a=[]
             for english in enrows:
                 a.append(english[0]) # eng
-            
+            # print("aaaaaaaaaaa> ", a)
 
             # 세 개의 문장을 하나의 string으로 만들기
-            for i in a:
-                strs += i + ' '
-            show = {'number' : n, 'tid' : tid, 'cue':cue, 'korsentences':korsentences[k], 'result':strs, 'isShowTags': False, 'lang':lang}
+            foreresult = ' '
+            lastresult = ' '
+            # print("aaaaaaaaaaaaaa>", len(a))
+
+            for idx, i in enumerate(a):
+                if idx == 0:
+                    foreresult = i
+                elif idx == len(a) - 1:
+                    lastresult = i
+                else:
+                    strs += i + ' '
+            # print("ffffffff>", foreresult)
+            # print("lllll>", lastresult)
+            # print("sssssssssss>", strs)
+
+            show = {'number' : n, 'tid' : tid, 'cue':cue, 'korsentences':korsentences[k]['sentence'], 'foreresult':foreresult, 'lastresult':lastresult, 'result':strs, 'lang': lang, 'foresentence':korsentences[k]['foresentence'][0], 'lastsentence':korsentences[k]['lastsentence'][0]}
+            # print("show>>>>>", show)
+            # # 세 개의 문장을 하나의 string으로 만들기
+            # for i in a:
+            #     strs += i + ' '
+            # show = {'number' : n, 'tid' : tid, 'cue':cue, 'korsentences':korsentences[k], 'result':strs, 'isShowTags': False, 'lang':lang}
 
              # tags 가져오기
             tagSearch = 'select tags from Talk where talk_id = {}'.format(tid)
@@ -257,7 +274,7 @@ class ElasticSearch():
             cur.execute(tagSearch)
             tagrows = cur.fetchall()
             cur.close()
-            print("tt>>", tagrows)
+            # print("tt>>", tagrows)
 
             # for m in tagrows:
             #     tag = m[0]
@@ -275,7 +292,7 @@ class ElasticSearch():
             # self.shows[n] = show
             tshows.append(show)
             n+=1
-        print(tshows)
-
+        # print(tshows)
+        # print(n)
         return tshows
                 

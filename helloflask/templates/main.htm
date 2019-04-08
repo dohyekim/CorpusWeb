@@ -77,21 +77,35 @@
 
       {% raw %}
       <script id="entry-template" type="text/x-handlebars-template">
-        <ul>
+        <ol type="1">
             {{#each data}}
           <div>
             <li>
               <div class="row">
-                <div class="col-6">
+                <div class="col-8 text-left">
+                  <span class="foresentence{{@index}}">
+                    <button class="smbt btn-sm btn btn-link px-0 py-0" id="foresentence{{@index}}" onclick='showMore("{{escp foresentence}}", "foresentence{{@index}}")'>...</button>
+                  </span>
                   {{#if korsentences}}
-                  {{korsentences}}<br> 
+                  {{korsentences}}
+
                   {{else}}
-                  {{engsentences}}<br>
+                  {{engsentences}}
                   {{/if}}
+                  <span class="lastsentence{{@index}}">
+                    <button class="smbt btn-sm btn btn-link px-0 py-0" id="lastsentence{{@index}}" onclick='showMore("{{escp lastsentence}}", "lastsentence{{@index}}")'>...</button>
+                  </span>
+                  <br> 
+                    <span class="foreresult{{@index}}">
+                      <button class="smbt btn-sm btn btn-link px-0 py-0" id="foreresult{{@index}}" onclick='showMore("{{escp foreresult}}", "foreresult{{@index}}")'>...</button>
+                    </span>
                   {{result}}
+                    <span class="lastresult{{@index}}">
+                      <button class="smbt btn-sm btn btn-link px-0 py-0" id="lastresult{{@index}}" onclick='showMore("{{escp lastresult}}", "lastresult{{@index}}")'>...</button>
+                    </span>
                 </div>
 
-                <div class="col-6">
+                <div class="col-4"> 
                   <!-- Card -->
                   <div class="card">
                     <!-- Card content -->
@@ -99,23 +113,14 @@
                 
                       <!-- Title -->
                       <div class="form-inline">
-                        <h6 class="card-title">Tags</h6>
+                        <h6 class="card-title">Tags</h6> <br>
                         
                         <!-- Text -->
-                        {{#if isShowTags}}
                         <p class="card-text">
                           {{#each tags}}
-
                             <span id="tag{{@index}}" class="badge badge-pill badge-default">{{this}}</span>
                           {{/each}}
                         </p>
-
-                        {{else}}
-                          <!-- Button -->
-                          <a onclick="showTags({{tid}}, {{cue}}, '{{lang}}')" class="btn btn-sm btn-default ml-5">
-                            Click<i class="fas fa-magic ml-1"></i>
-                          </a>
-                        {{/if}}
                       </div>
                     </div>
                     
@@ -123,14 +128,11 @@
                   <!-- Card -->
                 </div>
               </div>
-              
-
-              
+              <br>
             </li>
-
           </div>
           {{/each}}
-        </ul>
+        </ol>
       </script>
       {% endraw %}
 
@@ -148,23 +150,8 @@
             </li>
 
             <li class="page-item active">
-              <a class="page-link" href="#">1
-                <span class="sr-only">(current)</span>
-              </a>
+              <a class="page-link" href="#">현재</a>
             </li>
-            <li class="page-item">
-              <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">3</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">4</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">5</a>
-            </li>
-
             <li class="page-item">
               <a class="page-link" href="#" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
@@ -181,17 +168,12 @@
   </main>
   <!--Main layout-->  
   <script>
-    var currentData = null;
 
-    /*
-    Handlebars.registerHelper('list', function(items, options) {
-      var out = "<ul>"; 
-      for( var k=0; k < items.length; k++ ) {
-        out = out + "<li>" + options.fn(items[k] + "</li>");
-      }
-      return out + "</ul>";
+    Handlebars.registerHelper('escp', function(data) {
+      return data.replace(/"/g, "'");
     });
-    */
+    
+    var currentData = null;
 
     function showTags(tid, cue, lang) {
       var d = currentData.find( function(t) { return t.cue == cue && t.tid == tid && t.lang == lang});
@@ -227,21 +209,21 @@
             // 매번 선언
             var span;
             var span = $('<span>')
-            span.attr("id", "tag" + (i+1))
-            var tag = splittags[i] 
-            span.addClass("badge").addClass("badge-pill").addClass("badge-default")
-            span.text(tag).appendTo('p.card-text')
-          }
+              span.attr("id", "tag" + (i+1))
+              var tag = splittags[i] 
+              span.addClass("badge").addClass("badge-pill").addClass("badge-default")
+              span.text(tag).appendTo('p.card-text')
+            }
         }
       });
     });
     */
-
-
+    
+    
     var dataTemplate = null;
     function hbs(sourceId, data, resultId) {
-        var source = document.getElementById(sourceId).innerHTML;
-        var template = Handlebars.compile(source);
+      var source = document.getElementById(sourceId).innerHTML;
+      var template = Handlebars.compile(source);
         if (resultId === 'korresult'){
           // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
           dataTemplate = template;
@@ -250,13 +232,24 @@
           dtTemplate = template;
         }
         
-       render(template, data, resultId)
-    }
+        render(template, data, resultId)
+      }
+      
+      function render(template, data, resultId) {
+        document.getElementById(resultId).innerHTML = template(data);
+      }
+      
+    //  var d = currentData.find( function(t) { return t.cue == cue && t.tid == tid && t.lang == lang});
+    //  d.isShowTags = true;
+      function showMore(data, id) {
+        var btn = $('button#' + id);
+        var spn = $('span.' + id);
+        btn.hide()
+        spn.text(data);
+      }
 
-    function render(template, data, resultId) {
-      document.getElementById(resultId).innerHTML = template(data);
-    }
 
+    // foreRes 
 
     $('#korsearch').click( function() {
       var s = $('#ksearchwords').val()
@@ -265,7 +258,7 @@
       }
       else {
         $.ajax({
-          url: '/korsearch/' + $('#ksearchwords').val(),
+          url: '/korsearch/' + s,
           type: 'GET'
         }).done(function(data) {
           console.log("data>>>>>", data)
@@ -278,6 +271,9 @@
         })
       }
     })
+    
+
+
 
     $('#engsearch').click( function() {
       var s = $('#esearchwords').val()
@@ -286,7 +282,7 @@
       }
       else {
         $.ajax({
-          url: '/engsearch/' + $('#esearchwords').val(),
+          url: '/engsearch/' + s,
           type: 'GET'
         }).done(function(data) {
           console.log("data>>>>>", data)
