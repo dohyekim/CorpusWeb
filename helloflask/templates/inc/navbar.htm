@@ -21,13 +21,14 @@
     
               <!-- Left -->
               <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                  <a class="nav-link waves-effect" href="#">Corpus
+                <li class="nav-item {% if (request.path == '/') %} active {% endif %}">
+                  <a class="nav-link waves-effect" href="/">Corpus
                     <span class="sr-only">(current)</span>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">Compare</a>
+                <!--                 <li class="nav-item {% if (request.path == '/') %}active{% endif %}"> -->
+                <li class="nav-item {% if (request.path == '/compare') %} active {% endif %}">
+                  <a class="nav-link waves-effect" href="/compare">Compare</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
