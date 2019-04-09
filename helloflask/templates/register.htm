@@ -1,0 +1,88 @@
+{%extends 'layout.htm' %}
+{%block main%}
+
+<div class=" container content-section ml-5 mt-5 pt-5">
+    <form method="POST" action="">
+        {{ register.hidden_tag() }}
+
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Join Today</legend>
+            <div class="form-group">
+                {{register.username.label(class="form-control-label")}}
+                {%if register.username.errors %}
+                    {{ register.username(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {%for error in register.username.errors%}
+                            <span>{{ error }}</span>
+                        {%endfor%}
+                    </div>
+                {%else%}
+                    {{register.username(class="form-control form-control-lg")}}
+                {%endif%}
+    
+            </div>
+        
+            <!-- E-mail -->
+            <div class="form-group">
+                {{ register.email.label(class="form-control-label")}}
+                {%if register.email.errors %}
+                    {{ register.email(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {%for error in register.email.errors%}
+                            <span>{{ error }}</span>
+                        {%endfor%}
+                    </div>
+                {%else%}
+                    {{register.email(class="form-control form-control-lg")}}
+                {%endif%}
+            </div>
+    
+            <!-- Password -->
+            <div class="form-group">
+                {{ register.password.label(class="form-control-label")}}
+                {%if register.password.errors %}
+                    {{ register.password(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {%for error in register.password.errors%}
+                            <span>{{ error }}</span>
+                        {%endfor%}
+                    </div>
+                {%else%}
+                    {{register.password(class="form-control form-control-lg")}}
+                {%endif%}
+            </div>
+            <small id="defaultRegisterFormPasswordHelpBlock" class="text-left form-text text-muted mb-4">
+                At least 4 characters
+            </small>
+        
+            <!-- PasswordConfirm -->
+            <div class="form-group">
+                {{ register.confirm_password.label(class="form-control-label")}}
+                {%if register.confirm_password.errors %}
+                    {{ register.confirm_password(class="form-control form-control-lg is-invalid")}}
+                    <div class="invalid-feedback">
+                        {%for error in register.confirm_password.errors%}
+                            <span>{{ error }}</span>
+                        {%endfor%}
+                    </div>
+                {%else%}
+                    {{register.confirm_password(class="form-control form-control-lg")}}
+                {%endif%}
+            </div>
+
+        
+            <!-- Sign up button -->
+            <div class="form-group">
+                {{ register.submit(class="btn btn-info my-4 btn-block")}}
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+<div class="border-top pt-3 ml-5">
+    <small class="text-muted">
+        Already Have An Account? <a class="ml-2" href="/main">Sign In</a>
+    </small>
+</div>
+
+{%endblock main%}

@@ -1,5 +1,6 @@
 from helloflask.init_db import Base
 from sqlalchemy import Column, Integer, String, TIMESTAMP, Float, ForeignKey, PrimaryKeyConstraint, func
+from sqlalchemy.orm import relationship, backref
 
 class Talk(Base):
     __tablename__ = 'Talk'
@@ -52,7 +53,30 @@ class User(Base):
     #tostring
     def __repr__(self):
         return '%s, %s, %s' %(self.passwd,self.email, self.username)
+    
+    def json (self) :
+        j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return j
 
+class Post(Base):
 
+    __tablename__='Post'
 
+    postid = Column(Integer, primary_key = True)
+    title = Column(String(256))
+    date_posted = Column(TIMESTAMP)
+    content = Column(String(1024))
+    user_id = Column(Integer, ForeignKey('User.id'))
+    user = relationship('User')
 
+    def __init__(self, title, content, user_id):
+        self.title = title
+        self.content = content
+        self.user_id = user_id
+
+    def __repr__(self):
+        return 'Post %r, %r' %(self.title, self.date_posted)
+    
+    def json (self) :
+        j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return j

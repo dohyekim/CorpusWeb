@@ -1,0 +1,129 @@
+<!-- 로그인 Modal -->
+
+<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <form class="text-center border border-light p-5" method="POST" >
+            <p class="h4 mb-4">WELCOME!</p>
+            <div class="modal-body mx-3">
+
+                <div class="md-form mb-5">
+                <i class="fas fa-envelope prefix grey-text"></i>
+                <input type="email" id="defaultForm-email" name="modalemail" class="form-control validate" >
+                <label data-error="wrong" data-success="right" for="defaultForm-email">Your email</label>
+                </div>
+
+                <div class="md-form mb-4">
+                <i class="fas fa-lock prefix grey-text"></i>
+                <input type="password" id="defaultForm-pass" name="modalpassword" class="form-control validate" >
+                <label data-error="wrong" data-success="right" for="defaultForm-pass">Your password</label>
+                </div>
+
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button class="btn btn-default" type="button" onclick="modalLogin('defaultForm-email','defaultForm-pass')">Login</button>
+            </div>
+            <div class="border-top pt-3 ml-5">
+                Not a member? <a class="ml-2" href="/register">Register Here</a>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="text-center">
+  <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#modalLoginForm">Launch
+    Modal Login Form</a>
+</div> -->
+
+<script>
+
+function modalLogin(emailId, passwdId){
+    var email = $("#" + emailId).val();
+    var passwd = $('#' + passwdId).val();
+    if ( !email) {
+        alert('Email Please!!!')
+    }
+    else if ( !passwd) {
+        alert('Password Please!!!')
+    }
+    else {
+    var logindata = { 'email' : email, 'passwd' : passwd};
+
+    $.ajax({
+        url : '/login',
+        data : JSON.stringify(logindata), 
+        type : 'POST',
+        contentType:"application/json",
+        dataType: 'json'
+        }).done(function (res) {
+        console.log("res>>>", res)
+        if (res['status'] == 'success') {
+            if (res['next']) {
+                window.location.href = res['next'];
+            }
+            else {
+                window.location.href = "/";
+            }
+            closeModal('modalLoginForm')
+
+            $('#loginbtn').text(res['username'] + '님')
+            $('#loginicon').removeClass("fas").removeClass("fa-sign-in-alt").addClass("far").addClass("fa-grin-alt")
+        }
+        else {
+            console.log("res>>>>>>>>>>", res)
+            alert("we don't recognize that email and(or) password. Please try again.")
+            email = ''
+            passwd = ''
+            $('#' + emailId).focus()
+
+        }
+        }).fail(function (xhr, status, errorThrown) {
+        console.error("Error!", xhr, status, errorThrown)
+        }).always(function (xhr, status) {
+        console.log("request complete")
+        });
+        
+    };
+};
+
+
+function login(){
+    alert("Ok")
+    var logindata = { 'email' : email, 'passwd' : passwd};
+
+    $.ajax({
+        url : '/loginpost',
+        data : JSON.stringify(logindata), 
+        type : 'POST',
+        contentType:"application/json",
+        dataType: 'json'
+        }).done(function (res) {
+        console.log("res>>>", res)
+        if (res['status'] == 'success') {
+            closeModal('modalLoginForm')
+            $('#loginbtn').text(res['username'] + '님')
+            $('#loginicon').removeClass("fas").removeClass("fa-sign-in-alt").addClass("far").addClass("fa-grin-alt")
+        }
+        else {
+            alert("we don't recognize that email and(or) password. Please try again.")
+            email = ''
+            passwd = ''
+            $('#' + emailId).focus()
+
+        }
+        }).fail(function (xhr, status, errorThrown) {
+        console.error("Error!", xhr, status, errorThrown)
+        }).always(function (xhr, status) {
+        console.log("request complete")
+        });
+    };
+</script>

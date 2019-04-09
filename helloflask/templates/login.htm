@@ -1,0 +1,29 @@
+{% extends 'layout.htm' %}
+{% block main%}
+
+<div class="container content-section ml-5 mt-5 pt-5">
+    <form method="POST" action="">
+        <!-- flash 메시지 뿌릴 곳!! -->
+        {%for message in get_flashed_messages()%}
+        <div class="alert alert-success" role="alert">
+            <strong>{{message}}</strong>
+        </div>
+        {%endfor%}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Welcome!</legend>
+            <!-- E-mail -->
+            <input type="email" id = 'defaultLoginFormEmail' name='email' class="form-control mb-4" placeholder="E-mail" required>
+            
+            <!-- Password -->
+            <input type="password" id = 'defaultLoginFormPassword' name='passwd' class="form-control mb-4" placeholder="Password" required>
+            
+        
+            <!-- Sign in button -->
+            <button class="btn btn-info btn-block my-4" type="button" onclick="modalLogin('defaultLoginFormEmail', 'defaultLoginFormPassword')">Sign In</button>
+
+        </fieldset>
+    </form>
+
+</div>
+
+{%endblock main%}

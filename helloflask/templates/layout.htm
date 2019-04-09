@@ -46,7 +46,17 @@
         // Animations initialization
         new WOW().init();
 
+        function openModal(modalId) {
+            $('#' + modalId).modal('show');
+        }
+
+        function closeModal(modalId) {
+            $('#' + modalId).modal('hide');
+        }
+        
+
     </script>
+{% include "inc/modal.htm" %}
     </body>
 
 </html>
