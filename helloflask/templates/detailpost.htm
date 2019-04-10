@@ -1,0 +1,43 @@
+{% extends 'layout.htm'%}
+{%block main%}
+<div class="row mt-5">
+    <div class="container">
+        <div class="mt-5 card-body">
+            <script id="detail-template-{{userid}}" type="text/x-handlebars-template">
+                {% raw %}
+                    <tr>
+                        <!-- 여기부터 다시하기!!!!!!! -->
+                {% endraw %}
+            </script>
+            <div class="row">
+
+                <div class="col-lg-9 h5 "></div>
+                <div class="col-lg-3">날짜</div>
+
+            </div>
+            <div class="row">
+                <div class="col-lg-9"></div>
+                <div class="col-lg-3">
+                    written by <strong>작성자</strong>
+                </div>
+            </div>
+            <hr>
+            <p>글 내용</p>
+        </div>
+    </div>    
+</div>
+<script>
+var data = null
+    $(document).ready(
+    $.ajax({
+        url : '/posting/lists/{{userid}}',
+        type : 'GET' 
+    }).done(function(res) {
+        data = res;
+        console.log("res>>>>>", data)
+    }).fail(function(res) {
+        console.log("Error!!", res)
+    })
+)
+</script>
+{%endblock main%}

@@ -1,5 +1,5 @@
 from helloflask import app
-from flask import Flask, render_template, url_for, jsonify, request, flash, session, redirect
+from flask import Flask, render_template, url_for, jsonify, request, flash, session, redirect, Response, make_response
 from helloflask.init_db import init_database, db_session
 from helloflask.models import Talk, User, Post
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,8 +11,48 @@ from helloflask.forms import RegistrationForm
 
 @app.route('/')
 def main():
-
+    session['next'] = request.url
     return render_template('main.htm', title="Main")
+
+
+@app.route('/posting/detail/<postid>')
+def detail(postid):
+    p = Post.query.filter('postid = :postid').params(postid=postid).first()
+    userid = p.user.userid
+    return render_template('detailpost.htm', userid=userid)
+
+
+@app.route('/posting/write')
+def postwrite():
+    return render_template('write.htm')
+
+
+@app.route('/posting/lists/<userid>')
+def lists(userid):
+    if not session.get('loginUser'):
+        return redirect('/login')
+    else:
+        userid = session['loginUser']['userid']
+        posts = Post.query.options(subqueryload(Post.user)).filter('user_id = :userid').params(userid=userid).all()
+        lsts = []
+        for post in posts:
+            l = post.json()
+            l['username'] = post.user.username
+            lsts.append(l)
+        print(lsts)
+        return jsonify(lsts)
+# [s.json() for s in cmts]
+
+@app.route('/posting')
+def posting():
+    session['next'] = request.url
+    userid = session['loginUser']['userid']
+    if not session.get('loginUser'):
+        session['next'] = request.url
+        return redirect('/login')
+    print("userid>>>>>>>>>>", userid)
+    return render_template('posting.htm', userid = userid)
+
 
 @app.route('/register', methods=['GET','POST'])
 def register_post():
@@ -41,35 +81,29 @@ def register_post():
 #     print(tags.tags)
 #     return jsonify(tags.json())
 
+@app.route('/logout')
+def logout():
+    if session.get('loginUser'):
+        del session['loginUser']
+    return redirect(session['next'])
+
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('login.htm')
 
-@app.route('/posting/lists/<userid>')
-def lists(userid):
-    userid = session['loginUser']['userid']
-    posts = Post.query.options(subqueryload(Post.user)).filter('user_id = :userid').params(userid=userid).all()
-
-    lsts = []
-    for post in posts:
-        l = post.json()
-        lsts.append(l)
-    return jsonify(lsts)
-
-@app.route('/posting')
-def posting():
-    return render_template('posting.htm')
 
 @app.route('/login', methods=['POST'])
 def loginpost():
     a = request.json
+    print("aaaaaaaaaaaa>", a)
     u = User.query.filter('email = :email and passwd = sha2(:passwd, 256)').params(email = a['email'], passwd = a['passwd']).first()
+    session['loginUser'] = {'userid':u.id, 'username':u.username}
     if u is not None:
-        session['loginUser'] = {'userid':u.id, 'username':u.username}
-        statusjson = { 'status' : 'success', 'username' : session['loginUser']['username']}
         if (session.get('next')):
-            nextpg = {'next': session.get('next')}
-            return jsonify(nextpg)
+            statusjson = { 'status' : 'success', 'username' : session['loginUser']['username'], 'session' : 'OK', 'next': session.get('next')}
+            return jsonify(statusjson)
+        else:
+            statusjson = { 'status' : 'success', 'username' : session['loginUser']['username'], 'session' : 'OK'}
         return jsonify(statusjson)
     else:
         errorjson = { 'status' : 'error'}
@@ -77,7 +111,19 @@ def loginpost():
 
 @app.route('/compare')
 def compare():
+    session['next'] = request.url
     return render_template('compare.htm')
+
+
+# def wc():
+#     key = request.args.get('key')
+#     value = request.args.get('val')
+#     res = Response('Done',200)
+#     res.set_cookie(key, value)
+#     # session[key] = value
+#     session['Token'] = '123X'
+#     return make_response(res)
+
 
 @app.route('/korsearch/<searchwords>')
 def ksearchjson(searchwords):

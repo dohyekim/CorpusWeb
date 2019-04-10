@@ -224,7 +224,7 @@
     function hbs(sourceId, data, resultId) {
       var source = document.getElementById(sourceId).innerHTML;
       var template = Handlebars.compile(source);
-        if (resultId === 'korresult'){
+      if (resultId === 'korresult'){
           // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
           dataTemplate = template;
         }
@@ -234,9 +234,8 @@
         
         render(template, data, resultId)
       }
-      
-      function render(template, data, resultId) {
-        document.getElementById(resultId).innerHTML = template(data);
+    function render(template, data, resultId) {
+      document.getElementById(resultId).innerHTML = template(data);
       }
       
     //  var d = currentData.find( function(t) { return t.cue == cue && t.tid == tid && t.lang == lang});

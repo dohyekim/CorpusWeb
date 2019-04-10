@@ -67,24 +67,15 @@ function modalLogin(emailId, passwdId){
         }).done(function (res) {
         console.log("res>>>", res)
         if (res['status'] == 'success') {
-            if (res['next']) {
-                window.location.href = res['next'];
-            }
-            else {
-                window.location.href = "/";
-            }
+            window.location.href = res['next'];
             closeModal('modalLoginForm')
-
-            $('#loginbtn').text(res['username'] + '님')
-            $('#loginicon').removeClass("fas").removeClass("fa-sign-in-alt").addClass("far").addClass("fa-grin-alt")
-        }
+            }
         else {
             console.log("res>>>>>>>>>>", res)
             alert("we don't recognize that email and(or) password. Please try again.")
             email = ''
             passwd = ''
             $('#' + emailId).focus()
-
         }
         }).fail(function (xhr, status, errorThrown) {
         console.error("Error!", xhr, status, errorThrown)
@@ -108,7 +99,7 @@ function login(){
         dataType: 'json'
         }).done(function (res) {
         console.log("res>>>", res)
-        if (res['status'] == 'success') {
+        if (res['session'] == 'OK') {
             closeModal('modalLoginForm')
             $('#loginbtn').text(res['username'] + '님')
             $('#loginicon').removeClass("fas").removeClass("fa-sign-in-alt").addClass("far").addClass("fa-grin-alt")

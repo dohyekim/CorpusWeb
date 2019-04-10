@@ -30,9 +30,8 @@
                 <li class="nav-item {% if (request.path == '/compare') %} active {% endif %}">
                   <a class="nav-link waves-effect" href="/compare">Compare</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
-                    target="_blank">Portfolio</a>
+                <li class="nav-item {% if (request.path == '/posting') %} active {% endif %}">
+                  <a class="nav-link waves-effect" href="/posting">Portfolio</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link waves-effect" href="https://mdbootstrap.com/education/bootstrap/" target="_blank">Tips</a>
@@ -48,9 +47,13 @@
                   </a>
                 </li>
                 <li class="nav-item" >
-                  <a id="loginbtn" onclick="openModal('modalLoginForm')" class="btn btn-outline-info waves-effect" >
-                    <i id="loginicon" class="fas fa-sign-in-alt"></i>
-                    Login
+                  {% if session.loginUser %}
+                  <a id="loginbtn" href="/logout" class="btn btn-outline-info waves-effect" sytle="display:{%if session.loginUser %}block{%else%}none{%endif%}">
+                  <i class="far fa-grin-alt"></i> {{session.loginUser.username}}님
+                  {% else %}
+                  <a id="loginbtn" onclick="openModal('modalLoginForm')" class="btn btn-outline-info waves-effect" sytle="display:{%if session.loginUser %}block{%else%}none{%endif%}">                    
+                  <i id="loginicon" class="fas fa-sign-in-alt"></i> Login 
+                  {%endif%}
                   </a>
                 </li>
               </ul>
