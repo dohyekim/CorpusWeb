@@ -1,12 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    Hi
-</body>
-</html>
+{% extends 'layout.htm'%}
+{%block main%}
+<div class=" container content-section ml-5 mt-5 pt-5">
+    <form method="POST" action="">
+        <div class="md-form">
+            <i class="fas fa-user prefix"></i>
+            <input type="text" id="inputIconEx2" name = "title" class="form-control">
+            <label for="inputIconEx2">Title</label>
+        </div>
+
+        <div class="md-form amber-textarea active-amber-textarea">
+            <i class="fas fa-pencil-alt prefix"></i>
+            <textarea class="form-control z-depth-1" name="content" id="exampleFormControlTextarea6" rows="30"></textarea>
+        </div>
+
+        <div class="form-group text-right">
+            <button class="btn btn-info" type="submit">Post</button>
+        </div>
+    </form>
+</div>
+
+
+{%endblock main%}

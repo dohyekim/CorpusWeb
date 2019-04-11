@@ -62,6 +62,8 @@ class Post(Base):
 
     __tablename__='Post'
 
+    __table_args__ = ( PrimaryKeyConstraint('postid', 'user_id'), {} )
+
     postid = Column(Integer, primary_key = True)
     title = Column(String(256))
     date_posted = Column(TIMESTAMP)
@@ -69,13 +71,14 @@ class Post(Base):
     user_id = Column(Integer, ForeignKey('User.id'))
     user = relationship('User')
 
-    def __init__(self, title, content, user_id):
+    def __init__(self, postid, title, content, user_id):
+        self.postid = postid
         self.title = title
         self.content = content
         self.user_id = user_id
 
     def __repr__(self):
-        return 'Post %r, %r' %(self.title, self.date_posted)
+        return 'Post %r, %r, %r, %r' %(self.postid, self.title, self.content, self.user_id)
     
     def json (self) :
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}

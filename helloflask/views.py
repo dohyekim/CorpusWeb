@@ -6,7 +6,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import subqueryload, joinedload
 from sqlalchemy.sql import func
 from helloflask.Search import ElasticSearch
-from helloflask.forms import RegistrationForm
+from helloflask.forms import RegistrationForm, PostForm
+import difflib
 # import json
 
 @app.route('/')
@@ -15,16 +16,50 @@ def main():
     return render_template('main.htm', title="Main")
 
 
-@app.route('/posting/detail/<postid>')
-def detail(postid):
-    p = Post.query.filter('postid = :postid').params(postid=postid).first()
-    userid = p.user.userid
-    return render_template('detailpost.htm', userid=userid)
+@app.route('/posting/detail/<userid>/postid=<postid>')
+def detailajax(userid, postid):
+    print("userid>>>>>>>>>", userid)
+    print("postid>>>>", postid)
+    return render_template('detailpost.htm', userid=userid, postid=postid)
 
 
-@app.route('/posting/write')
+@app.route('/posting/<userid>/<postid>')
+def detail(userid, postid):
+    p = Post.query.options(subqueryload(Post.user)).filter('postid = :postid and user_id = :userid').params(postid=postid, userid=userid).first()
+    return jsonify(p.json())
+
+@app.route('/posting/write', methods=['POST'])
 def postwrite():
-    return render_template('write.htm')
+    loginUser = session.get('loginUser')
+    userid = session['loginUser']['userid']
+    title = request.form.get('title')
+    content = request.form.get('content')
+    postid = Post.query.filter('user_id=:userid').params(userid = userid).count() + 1
+    print("title>>>>", title)
+    print("content>>>>", content)
+    print("postid>>>>", postid)
+    print("userid>>>>", userid)
+    post = Post(postid, title, content, loginUser.get('userid'))
+    try:
+        db_session.add(post)
+        db_session.commit()
+        print("Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    except:
+        db_session.rollback()
+    return redirect('/posting')
+
+
+@app.route('/posting/write', methods=['GET', 'POST'])
+def getwrite():
+    if session.get('loginUser'):
+        form = PostForm()
+        return render_template('write.htm', title="New Post")
+
+    else:
+        session['next'] = request.url
+        return redirect('/login')
+
+
 
 
 @app.route('/posting/lists/<userid>')
@@ -43,14 +78,29 @@ def lists(userid):
         return jsonify(lsts)
 # [s.json() for s in cmts]
 
+@app.route('/posting/compare', methods=['POST'])
+def postingcompare():
+    if not session.get('loginUser'):
+        return redirect('/login')
+    htmls = request.json
+    print("htmls>>>>>> ", htmls)
+    htm_1 = htmls['1'].splitlines()
+    htm_2 = htmls['2'].splitlines()
+    d2 = difflib.HtmlDiff()
+    diffHtml = d2.make_file(htm_1, htm_2)
+    # print(diffHtml)
+    return jsonify({'HTML':diffHtml})
+    
+
 @app.route('/posting')
 def posting():
+    # request.args.get('list-title-')
     session['next'] = request.url
-    userid = session['loginUser']['userid']
     if not session.get('loginUser'):
         session['next'] = request.url
         return redirect('/login')
-    print("userid>>>>>>>>>>", userid)
+    else:
+        userid = session['loginUser']['userid']
     return render_template('posting.htm', userid = userid)
 
 
