@@ -19,11 +19,16 @@
             
         
             <!-- Sign in button -->
-            <button class="btn btn-info btn-block my-4" type="button" onclick="modalLogin('defaultLoginFormEmail', 'defaultLoginFormPassword')">Sign In</button>
+            <button class="btn btn-info btn-block my-4" type="button" id="loginsubmit">Sign In</button>
 
         </fieldset>
     </form>
 
 </div>
-
+<script>
+    $('#loginsubmit').click( function() {
+        modalLogin('defaultLoginFormEmail', 'defaultLoginFormPassword')
+    });
+    
+</script>
 {%endblock main%}

@@ -24,13 +24,13 @@
           <!--/.Featured Image-->
           <script id="table-template-{{userid}}" type="text/x-handlebars-template">
             {% raw %}
-              {{#each context}}  
+              {{#each data}}  
                 <tr>
                   <td>{{postid}}</td>
                   <td>{{username}}</td>
                   <td><a href="/posting/detail/{{user_id}}/postid={{postid}}">{{title}}</a></td>
-                  <td>{{date_posted}}</td>
-                  <!-- Default unchecked -->
+                  <td>{{datefmt date_posted}}</td>
+
                   <td>
                   <div class="custom-control custom-checkbox ml-2">
                       <input no ="{{@index}}" type="checkbox" class="custom-control-input" id="check{{postid}}">
@@ -69,11 +69,9 @@
               <!--Card content-->
               <div class="card-body">
 
-                <p class="h5 my-4">That's a very long heading </p>
+                <p class="h5 my-4 text-center">비교</p>
 
-                <p id="compare-content">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, ut rerum deserunt corporis
-                  ducimus at, deleniti ea alias dolor reprehenderit sit vel. Incidunt id illum doloribus,
-                  consequuntur maiores sed eligendi.</p>
+                <p id="compare-content">비교하고 싶은 글을 최대 2개 선택해주세요.</p>
 
 
               </div>
@@ -216,31 +214,59 @@
 <!--Main layout-->
 
 <script>
+
+Handlebars.registerHelper('datefmt', function (dt) {
+  var m = moment(dt);
+  // format으로 출력한다
+  var output = m.format("YYYY MMMM Do, a h:mm");
+
+  return output; // 4월 12일 2019, 4:00:26 오후 
+  }); 
 var data = {}
 var len = null;
+var dataTemplate = null;
+
+function hbs(sourceId, data, resultId) {
+  var source = document.getElementById(sourceId).innerHTML;
+  var template = Handlebars.compile(source);
+  if (resultId === 'postingbody-{{userid}}'){
+      // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
+      dataTemplate = template;
+    }    
+    render(template, data, resultId)
+  }
+function render(template, data, resultId) {
+  document.getElementById(resultId).innerHTML = template(data);
+  } 
+
 $(document).ready(
   $.ajax({
     url : '/posting/lists/{{userid}}',
     type : 'GET' 
   }).done(function(res) {
     len = res.length;
-    console.log("len>>>>>>", res)
-    var source = document.getElementById('table-template-{{userid}}').innerHTML;
-    var template = Handlebars.compile(source);
-    data["context"] = res
-    var context = data;
-    var html = template(context);
-    document.getElementById('postingbody-{{userid}}').innerHTML = html;
+    data = res;
+    hbs("table-template-{{userid}}", {data:data}, 'postingbody-{{userid}}')
   }).fail(function(res) {
     console.log("Error!!", res)
   })
 )
+
+
 var htmls = {};
 var a = 1;
 function comparetwo() {
-  for (var k=1; k <= data['context'].length; k++) {
-    if ($('#check'+ String(k)+':checked').length == 1){
-      var htm = data['context'][k-1]['content'];
+  var chckcnt = [];
+  for (var k=1; k <= data.length; k++) {
+    var chckbox = $('#check'+ String(k)+':checked');
+    if (chckbox.length == 1){
+      chckcnt.push(k);
+      if (chckcnt.length > 2) {
+        alert("두 개까지만 선택해주세요!")
+        chckbox.prop("checked", false)
+        return 
+      }
+      var htm = data[k-1]['content'];
       htmls[String(a)]=htm;
       a = a + 1;
     }

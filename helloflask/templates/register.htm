@@ -23,7 +23,7 @@
             </div>
         
             <!-- E-mail -->
-            <div class="form-group">
+            <div class="form-group" id="registeremail">
                 {{ register.email.label(class="form-control-label")}}
                 {%if register.email.errors %}
                     {{ register.email(class="form-control form-control-lg is-invalid")}}
@@ -38,7 +38,7 @@
             </div>
     
             <!-- Password -->
-            <div class="form-group">
+            <div class="form-group" id="registerpwd">
                 {{ register.password.label(class="form-control-label")}}
                 {%if register.password.errors %}
                     {{ register.password(class="form-control form-control-lg is-invalid")}}
@@ -72,7 +72,7 @@
 
         
             <!-- Sign up button -->
-            <div class="form-group">
+            <div class="form-group" id="registersubmit">
                 {{ register.submit(class="btn btn-info my-4 btn-block")}}
             </div>
         </fieldset>
@@ -84,5 +84,6 @@
         Already Have An Account? <a class="ml-2" href="/main">Sign In</a>
     </small>
 </div>
+
 
 {%endblock main%}

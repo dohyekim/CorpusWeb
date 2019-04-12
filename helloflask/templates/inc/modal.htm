@@ -57,7 +57,8 @@ function modalLogin(emailId, passwdId){
     }
     else {
     var logindata = { 'email' : email, 'passwd' : passwd};
-
+    console.log("longindata>>>>>>>>>> ", logindata)
+ 
     $.ajax({
         url : '/login',
         data : JSON.stringify(logindata), 

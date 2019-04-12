@@ -62,9 +62,8 @@ class Post(Base):
 
     __tablename__='Post'
 
-    __table_args__ = ( PrimaryKeyConstraint('postid', 'user_id'), {} )
-
-    postid = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True)
+    postid = Column(Integer)
     title = Column(String(256))
     date_posted = Column(TIMESTAMP)
     content = Column(String(1024))
