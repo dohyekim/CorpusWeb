@@ -13,6 +13,7 @@ select * from Post;
 /*drop table Post;*/
 
 CREATE TABLE `Post` (
+	`id` int unsigned auto_increment primary key,
   `postid` int(10) unsigned NOT NULL,
   `title` varchar(256),
   `date_posted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

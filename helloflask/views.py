@@ -49,7 +49,7 @@ def postwrite():
     return redirect('/posting')
 
 
-@app.route('/posting/write', methods=['GET', 'POST'])
+@app.route('/posting/write', methods=['GET'])
 def getwrite():
     if session.get('loginUser'):
         form = PostForm()
