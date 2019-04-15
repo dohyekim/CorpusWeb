@@ -25,8 +25,8 @@
           <script id="table-template-{{userid}}" type="text/x-handlebars-template">
             {% raw %}
               {{#each data}}  
-                <tr>
-                  <td>{{postid}}</td>
+                <tr id="{{postid}}">
+                  <td>{{@index}}</td>
                   <td>{{username}}</td>
                   <td><a href="/posting/detail/{{user_id}}/postid={{postid}}">{{title}}</a></td>
                   <td>{{datefmt date_posted}}</td>
@@ -36,6 +36,12 @@
                       <input no ="{{@index}}" type="checkbox" class="custom-control-input" id="check{{postid}}">
                       <label class="custom-control-label" for="check{{postid}}"></label>
                   </div>
+                  </td>
+                  <td>
+                    <div class="custom-control custom-checkbox ml-2">
+                        <input type="checkbox" class="custom-control-input" id="del{{@index}}">
+                        <label class="custom-control-label" for="del{{@index}}"></label>
+                    </div>
                   </td>
                 </tr>
               {{/each}}
@@ -48,6 +54,9 @@
             <div>
             <a class="btn btn-info btn-md" href="/posting/write"> 글쓰기 </a>
             </div>
+            <div>
+              <button class="btn btn-danger btn-md" type="button" onclick="delPost()"> 삭제하기 </a>
+            </div>
           </div>
           <table id="postingtable" class="table table-hover">
               <thead>
@@ -57,6 +66,7 @@
                   <th scope="col">Title</th>
                   <th scope="col">Date</th>
                   <th scope="col">비교</th>
+                  <th scope="col">삭제</th>
                   </tr>
               </thead>
               <tbody id="postingbody-{{userid}}">
@@ -232,9 +242,9 @@ function hbs(sourceId, data, resultId) {
   if (resultId === 'postingbody-{{userid}}'){
       // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
       dataTemplate = template;
+      render(dataTemplate, data, resultId)
     }    
-    render(template, data, resultId)
-  }
+  } 
 function render(template, data, resultId) {
   document.getElementById(resultId).innerHTML = template(data);
   } 
@@ -246,6 +256,7 @@ $(document).ready(
   }).done(function(res) {
     len = res.length;
     data = res;
+    console.log("Data>>>>>>", data)
     hbs("table-template-{{userid}}", {data:data}, 'postingbody-{{userid}}')
   }).fail(function(res) {
     console.log("Error!!", res)
@@ -259,7 +270,11 @@ function comparetwo() {
   var chckcnt = [];
   for (var k=1; k <= data.length; k++) {
     var chckbox = $('#check'+ String(k)+':checked');
-    if (chckbox.length == 1){
+    if (chckbox.length == 0){
+      alert('두 개 선택해주세요!')
+      return
+    }
+    else if (chckbox.length == 1){
       chckcnt.push(k);
       if (chckcnt.length > 2) {
         alert("두 개까지만 선택해주세요!")
@@ -283,18 +298,36 @@ function comparetwo() {
       $('#compare-content').html(h);
       $('td.diff_next').remove() 
       $('table:nth-child(2) tbody tr:nth-child(2) td:nth-child(2) table').remove()
-      $('body > table:nth-child(2) > tbody > tr:nth-child(1) > th').remove() 
-      $('body > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(2) > td').text('추가됨') 
-      $('body > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(3) > td').text('바뀜')
-      $('body > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(4) > td').text('삭제됨')
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(1) > th').remove()
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(2) > table').remove() 
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(2) > td').text('추가됨')
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(3) > td').text('바뀜')
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(4) > td').text('삭제됨')
       $('table.diff').css('font-family', 'Times New Roman')
-      $('td.diff_header').css('text-align', 'center')
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2)').css('text-align', 'center')
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table').removeAttr('border')
     }).fail(function(res) {
       console.log("ERRR>>>>>>", res)
     })
 }
 
-</script>
+function delPost(userid) {
+  var postids = $('tr[id]')
+  for (var i=0; i<=data.length; i++) {
+    var postid = postids[i]['id']
+    if ($("input:checkbox[id='del" + String(i) + "'" + "]").is(":checked") == true){ 
+      $.ajax({
+          url:'/posting/delete/{{userid}}/' + postid,
+          type:'DELETE'
+        }).done(function(res){
+          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!deleted")
+          location.href='/posting'
+        })
+      }
+  }
+};
+  
+  </script>
 
 
 {%endblock main%}

@@ -18,15 +18,28 @@ def main():
 
 @app.route('/posting/detail/<userid>/postid=<postid>')
 def detailajax(userid, postid):
-    print("userid>>>>>>>>>", userid)
-    print("postid>>>>", postid)
-    return render_template('detailpost.htm', userid=userid, postid=postid)
 
+    return render_template('detailpost.htm', userid=userid, postid=postid)
 
 @app.route('/posting/<userid>/<postid>')
 def detail(userid, postid):
     p = Post.query.options(subqueryload(Post.user)).filter('postid = :postid and user_id = :userid').params(postid=postid, userid=userid).first()
-    return jsonify(p.json())
+    a = p.json()
+    a['username'] = p.user.username
+    return jsonify(a)
+
+@app.route('/posting/delete/<userid>/<postid>', methods=['DELETE'])
+def delpost(userid, postid):
+    dpost = Post.query.filter('postid=:postid and user_id = :userid').params(postid=postid, userid=userid).first()
+    try:
+        db_session.delete(dpost)
+        db_session.commit()
+        print("-------------------------------------------------Delete success")
+        return ''
+    except Exception as err:
+        db_session.rollback()
+        print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
+        return ''
 
 @app.route('/posting/write', methods=['POST'])
 def postwrite():
@@ -34,18 +47,19 @@ def postwrite():
     userid = session['loginUser']['userid']
     title = request.form.get('title')
     content = request.form.get('content')
-    postid = Post.query.filter('user_id=:userid').params(userid = userid).count() + 1
-    print("title>>>>", title)
-    print("content>>>>", content)
-    print("postid>>>>", postid)
-    print("userid>>>>", userid)
-    post = Post(postid, title, content, loginUser.get('userid'))
+    # postid = Post.query.filter('user_id=:userid').params(userid = userid).count() + 1
+    # print("title>>>>", title)
+    # print("content>>>>", content)
+    # print("postid>>>>", postid)
+    # print("userid>>>>", userid)
+    post = Post(title, content, loginUser.get('userid'))
     try:
         db_session.add(post)
         db_session.commit()
         print("Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    except:
+    except Exception as err:
         db_session.rollback()
+        print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
     return redirect('/posting')
 
 
@@ -58,8 +72,6 @@ def getwrite():
     else:
         session['next'] = request.url
         return redirect('/login')
-
-
 
 
 @app.route('/posting/lists/<userid>')
@@ -147,8 +159,8 @@ def loginpost():
     a = request.json
     print("aaaaaaaaaaaa>", a)
     u = User.query.filter('email = :email and passwd = sha2(:passwd, 256)').params(email = a['email'], passwd = a['passwd']).first()
-    session['loginUser'] = {'userid':u.id, 'username':u.username}
     if u is not None:
+        session['loginUser'] = {'userid':u.id, 'username':u.username}
         if (session.get('next')):
             statusjson = { 'status' : 'success', 'username' : session['loginUser']['username'], 'session' : 'OK', 'next': session.get('next')}
             return jsonify(statusjson)

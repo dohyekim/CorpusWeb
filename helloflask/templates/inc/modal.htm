@@ -71,7 +71,7 @@ function modalLogin(emailId, passwdId){
             window.location.href = res['next'];
             closeModal('modalLoginForm')
             }
-        else {
+        else if (res['status'] == 'error') {
             console.log("res>>>>>>>>>>", res)
             alert("we don't recognize that email and(or) password. Please try again.")
             email = ''

@@ -5,7 +5,7 @@ def get_conn():
         host='127.0.0.1',
         user='dooo',
         password='1234',
-        port=3307,
+        port=3306,
         db='corpusdb',
         charset='utf8')
 

@@ -62,16 +62,14 @@ class Post(Base):
 
     __tablename__='Post'
 
-    id = Column(Integer, primary_key = True)
-    postid = Column(Integer)
+    postid = Column(Integer, primary_key = True)
     title = Column(String(256))
     date_posted = Column(TIMESTAMP)
     content = Column(String(1024))
     user_id = Column(Integer, ForeignKey('User.id'))
     user = relationship('User')
 
-    def __init__(self, postid, title, content, user_id):
-        self.postid = postid
+    def __init__(self, title, content, user_id):
         self.title = title
         self.content = content
         self.user_id = user_id

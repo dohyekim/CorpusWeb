@@ -34,7 +34,7 @@ class ElasticSearch():
         engsentences = []
         # foresentence = []
         # lastsentence = []
-        for t in range(600, 610):
+        for t in range(1, 10):
             if (t,) in self.diffs:
                 continue
             # 검색
@@ -158,7 +158,7 @@ class ElasticSearch():
         self.kortalk = []
         korsentences = []
         # int(self.talkcnt)+1
-        for t in range(600, 610):
+        for t in range(1, 10):
             if (t,) in self.diffs:
                 continue
 

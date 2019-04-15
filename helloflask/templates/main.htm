@@ -227,12 +227,13 @@
       if (resultId === 'korresult'){
           // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
           dataTemplate = template;
+          render(template, data, resultId)
         }
         else {
           dtTemplate = template;
+          render(template, data, resultId)
         }
         
-        render(template, data, resultId)
       }
     function render(template, data, resultId) {
       document.getElementById(resultId).innerHTML = template(data);
