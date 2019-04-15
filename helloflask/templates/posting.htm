@@ -281,6 +281,14 @@ function comparetwo() {
       console.log("HTML>>>>>>>>", res)
       var h = res['HTML'];
       $('#compare-content').html(h);
+      $('td.diff_next').remove() 
+      $('table:nth-child(2) tbody tr:nth-child(2) td:nth-child(2) table').remove()
+      $('body > table:nth-child(2) > tbody > tr:nth-child(1) > th').remove() 
+      $('body > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(2) > td').text('추가됨') 
+      $('body > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(3) > td').text('바뀜')
+      $('body > table:nth-child(2) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(4) > td').text('삭제됨')
+      $('table.diff').css('font-family', 'Times New Roman')
+      $('td.diff_header').css('text-align', 'center')
     }).fail(function(res) {
       console.log("ERRR>>>>>>", res)
     })
