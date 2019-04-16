@@ -58,6 +58,28 @@ class User(Base):
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         return j
 
+class Checklist(Base):
+    # Table created at Mysql5(workbench)
+    __tablename__='Checklist'
+
+    id = Column(Integer, primary_key = True)
+    user_id = Column(Integer, ForeignKey('User.id'))
+    checklist = Column(String)
+    user = relationship('User')
+
+    def __init__(self, user_id, checklist):
+        self.user_id = user_id
+        self.checklist = checklist
+        
+
+    #tostring
+    def __repr__(self):
+        return '%s, %s' %(self.user_id, self.checklist)
+    
+    def json (self) :
+        j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return j
+
 class Post(Base):
 
     __tablename__='Post'

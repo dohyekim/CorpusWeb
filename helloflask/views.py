@@ -1,7 +1,7 @@
 from helloflask import app
 from flask import Flask, render_template, url_for, jsonify, request, flash, session, redirect, Response, make_response
 from helloflask.init_db import init_database, db_session
-from helloflask.models import Talk, User, Post
+from helloflask.models import Talk, User, Post, Checklist
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import subqueryload, joinedload
 from sqlalchemy.sql import func
@@ -15,6 +15,21 @@ def main():
     session['next'] = request.url
     return render_template('main.htm', title="Main")
 
+@app.route('/posting/save/<userid>', methods=['POST'])
+def save(userid):
+    j={}
+    savelst = request.json
+    print("sssssssssssssssssssssssssssssssssssssssssss> ", savelst)
+    c = Checklist(userid, savelst['checklist'])
+    try:
+        db_session.add(c)
+        db_session.commit()
+        print("checklist data inserted")
+        j['status'] = 'success'
+    except:
+        db_session.rollback()
+        j['status'] = 'fail'
+    return jsonify(j)
 
 @app.route('/posting/detail/<userid>/postid=<postid>')
 def detailajax(userid, postid):

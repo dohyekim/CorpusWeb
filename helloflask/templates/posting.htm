@@ -13,7 +13,7 @@
       <div class="row">
 
         <!--Grid column-->
-        <div class="mb-4">
+        <div class="mb-4 col-8">
 
           <!--Featured Image-->
           <div class="card mb-4 wow fadeIn">
@@ -54,17 +54,12 @@
             <div>
             <a class="btn btn-info btn-md" href="/posting/write"> 글쓰기 </a>
             </div>
-
-          <!-- modal -->
-            <!-- Central Modal Small -->
-            <!-- Button trigger modal -->
+            <!-- modal -->
             <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delconfirmmodal">
                 삭제하기
             </button>
             <div class="modal fade" id="delconfirmmodal" tabindex="-1" role="dialog" aria-labelledby="delconfirm"
               aria-hidden="true">
-
-              <!-- Change class .modal-sm to change the size of the modal -->
               <div class="modal-dialog modal-sm" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -83,68 +78,162 @@
                 </div>
               </div>
             </div>
-            <!-- Central Modal Small -->
-          <!-- /modal -->
-
-
-
-
-
-
+            <!-- /modal -->
           </div>
           <table id="postingtable" class="table table-hover">
               <thead>
                   <tr>
-                  <th scope="col">No</th>
-                  <th scope="col">작성자</th>
-                  <th scope="col">Title</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">비교</th>
-                  <th scope="col">삭제</th>
+                    <th scope="col">No</th>
+                    <th scope="col">작성자</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">비교</th>
+                    <th scope="col">삭제</th>
                   </tr>
-              </thead>
-              <tbody id="postingbody-{{userid}}">
-              </tbody>
-          </table>
+                </thead>
+                <tbody id="postingbody-{{userid}}">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--Grid row-->
+          
+          <div class="row">
           <!--Card-->
-
             <div class="col card mb-4 wow fadeIn">
-
               <!--Card content-->
               <div class="card-body text-center">
-
                 <p class="h5 my-4">비교</p>
-
                 <p id="compare-content">비교하고 싶은 글을 최대 2개 선택해주세요.</p>
-
-
               </div>
-
             </div>
             <!--/.Card-->
 
-        </div>
         <!--Grid column-->
+            <!-- Card -->
+            <div class="card col-4 ml-4 h-auto">
+              <!-- Card content -->
+              <div class="card-body">
+                <!-- Title -->
+                <div class="md-form" id="newchecklistarea">
+                  <h4 class="card-title"> 
+                  <i class="fas fa-user prefix"></i>
+                  <input type="text" id="newchecklist" class="form-control">
+                  <label id = "newchecklistlabel" for="newchecklist">이름</label>
+                </h4>
+                <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
+                  <i class="fas fa-plus" aria-hidden="true"></i>
+                </button>
+                </div>
+                <!-- Material input -->
+                <div class="row">
+                  <div class="md-form w-75">
+                    <i class="fas fa-user prefix"></i>
+                    <input type="text" id="newcheck" class="form-control">
+                    <label for="newcheck">추가하기</label>
+                    </div>
+                    <button type="button" id="newcheckbtn" class="btn btn-sm btn-default px-3 text-right">
+                      <i class="fas fa-plus" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <div id="checkarea">
+
+                  </div>
+                </div>
 
 
+                <div class="container">
+                  <button id="save" class="btn btn-sm btn-default float-right" type="button">저장하기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+            <!-- Card -->
 
-      </div>
-      <!--Grid row-->
 
     </section>
     <!--Section: Post-->
+    
 
-  </div>
+
 </main>
 <!--Main layout-->
 
 <script>
 
+function newchecklist() {
+  var labelName = $('#newchecklist').val();
+  console.log(labelName);
+  $('#newchecklistarea').html('<h4>' + labelName + '</h4>')
+}
+
+var ids = 1;
+$('#newcheckbtn').click( function() {
+  if ($('#newchecklistarea').val() == '') {
+    alert("체크리스트의 이름을 정해주세요!")
+    return
+  }
+  var txt = $('#newcheck').val();
+  console.log("Txt>>>>>>", txt)
+  $('#newcheck').val('');
+  var htmls = '<div class="custom-control custom-checkbox" id="checkboxarea' + String(ids) + '"> \
+  <input type="checkbox" class="custom-control-input checknew" id="checknew' + String(ids) + '"' + '>\
+  <label class="custom-control-label checknew" id="newlabel' + String(ids) + '"' + '\
+  for="checknew' + String(ids) + '"></label></div>';
+  console.log("htmls>>", htmls)
+  $(htmls).appendTo('#checkarea')
+  $('#newlabel' + String(ids)).text(txt);
+  ids = ids + 1;
+  $('input.checknew').change( function() {
+    setYellow();
+  })
+});
+
+function setYellow() {
+  console.log("hhh")
+  $('input.checknew').each(function () {
+    $(this).next('label').css('background-color', 'white');
+  })
+  
+  $('input.checknew:checked').each(function () {
+    console.log("hhhhhhhhh")
+    $(this).next('label').css('background-color', 'yellow');
+  })
+}
+
+var savedata = {};
+var savedt = []
+$('#save').click( function() {
+  var l = $('input.checknew').next('label').length;
+  for (var i = 1; i <= l; i++) {
+    savedt.push($('#newlabel' + String(i)).text())
+  };
+    savedata['checklist'] = savedt;
+  console.log("savedata", savedata)
+  $.ajax({
+    url : '/posting/save/{{userid}}',
+    data : JSON.stringify(savedata),
+    type : 'POST',
+    contentType:"application/json",
+    dataType: 'json'
+    }).done( function(res) {
+      if (res['status'] === 'fail') {
+        alert('저장에 실패했습니다! 다시 시도해주세요')
+      }
+      else {
+        alert('저장 성공!')
+      }
+    }).fail( function(res) {
+      console.log("Error!!", res)
+    })
+})
+
+
+
+
 Handlebars.registerHelper('datefmt', function (dt) {
   var m = moment(dt);
-  // format으로 출력한다
   var output = m.format("YYYY MMMM Do, a h:mm");
-
   return output; 
   }); 
 var data = {}
