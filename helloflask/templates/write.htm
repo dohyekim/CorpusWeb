@@ -1,23 +1,99 @@
 {% extends 'layout.htm'%}
+{%from "macro/modalmacro.htm" import modalmcr%}
 {%block main%}
-<div class=" container content-section ml-5 mt-5 pt-5">
+<div class=" col container content-section ml-5 mt-5 pt-5">
     <form method="POST" action="">
-        <div class="md-form">
+        <div class="md-form col-9">
             <i class="fas fa-user prefix"></i>
             <input type="text" id="inputIconEx2" name = "title" class="form-control">
             <label for="inputIconEx2">Title</label>
         </div>
+        
+            <div class="row">
+                <div class=" col-9 md-form amber-textarea active-amber-textarea">
+                    <i class="fas fa-pencil-alt prefix"></i>
+                    <textarea class="form-control z-depth-1" name="content" id="exampleFormControlTextarea6" rows="30"></textarea>
+                </div>
 
-        <div class="md-form amber-textarea active-amber-textarea">
-            <i class="fas fa-pencil-alt prefix"></i>
-            <textarea class="form-control z-depth-1" name="content" id="exampleFormControlTextarea6" rows="30"></textarea>
-        </div>
+                <div class="d-flex align-items-center col-3 mt-3">
+                    {%call modalmcr('default', 'loadChcklist', 'load', 'Checklist 불러오기', 'loadModal', '선택해주세요')%}
+                    {%raw%}
+                    <script id="name-template" type="text/x-handlebars-template">
+                        {{#each chckdata}}
+                        <option value="@index">{{name}}</option>
+                        {{/each}}
+                    </select>
+                </script>
+                {%endraw%}
+                <select id="namelist" class="browser-default custom-select">
+                    <option selected> 선택하기 </option>
+                </select>
+                {%endcall%}
+                    <!-- Card -->
+                    <div class="card">
+                
+                        <!-- Card content -->
+                        <div id="checklist" class="card-body">
 
+                        {% raw %}
+                            <script id="checklist-template" type="text/x-handlebars-template">
+                            <!-- Title -->
+                            <h4 class="card-title"> 체크리스트 이름 </h4>
+                            <!-- Default unchecked -->
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="defaultUnchecked">
+                                <label class="custom-control-label" for="defaultUnchecked">Default unchecked</label>
+                            </div>
+                        </script>
+                        {% endraw %}
+                    </div>
+                
+                    </div>
+                    <!-- Card -->
+                </div>
+            </div>
         <div class="form-group text-right">
             <button class="btn btn-info" type="submit">Post</button>
         </div>
     </form>
+
+    
 </div>
 
+
+<script>
+
+var chcktemplate;
+var chckdata = {};
+
+function hbs(sourceId, data, resultId) {
+  var source = document.getElementById(sourceId).innerHTML;
+  var template = Handlebars.compile(source);
+  if (resultId === 'checklist'){
+      // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
+      chcktemplate = template;
+      render(template, data, resultId)
+    }    
+  } 
+function render(template, data, resultId) {
+  document.getElementById(resultId).innerHTML = template(data);
+  } 
+
+
+$('#loadChcklist').click( function() {
+    $.ajax({
+        url : '/checklist/{{userid}}',
+        type : 'GET'
+    }).done(function (res) {
+        console.log("res>>>>>>", res)
+        chckdata = res;
+        hbs('name-template', {chckdata:chckdata}, 'namelist')
+        hbs("checklist-template", res, 'checklist')
+    }).fail(function(res) {
+        console.log("Error!!! ", res)
+    })
+});
+
+</script>
 
 {%endblock main%}

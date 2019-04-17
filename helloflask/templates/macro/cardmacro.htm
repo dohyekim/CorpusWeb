@@ -1,0 +1,78 @@
+<!-- Card -->
+<div class="card col-4 ml-4 h-auto">
+    <!-- Card content -->
+    <div class="card-body">
+        <!-- Title -->
+        <div class="md-form" id="newchecklistarea">
+        <h4 class="card-title"> 
+        <i class="fas fa-user prefix"></i>
+        <input type="text" id="newchecklist" class="form-control">
+        <label id = "newchecklistlabel" for="newchecklist"></label>
+        </h4>
+        <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+        </button>
+        </div>
+        <!-- Material input -->
+        <div class="row">
+        <div class="md-form w-75">
+            <i class="fas fa-user prefix"></i>
+            <input type="text" id="newcheck" class="form-control">
+            <label for="newcheck">추가하기</label>
+            </div>
+            <button type="button" id="newcheckbtn" class="btn btn-sm btn-default px-3 text-right">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div id="checkarea">
+
+        </div>
+    </div>
+
+
+        <div class="container">
+    <!-- (btnId, btnName, modalId, hId, msg, fn='') -->
+
+        {{modalmcr('default float-right', 'savebtn','save', '저장하기', 'saveModal', '저장하시겠습니까?')}}
+        </div>
+</div>
+
+
+<!-- Card -->
+<div class="card col-4 ml-4 h-auto">
+    <!-- Card content -->
+    <div class="card-body">
+        <!-- Title -->
+        <div class="md-form" id="newchecklistarea">
+        <h4 class="card-title"> 
+        <i class="fas fa-user prefix"></i>
+        <input type="text" id="newchecklist" class="form-control">
+        <label id = "newchecklistlabel" for="newchecklist"></label>
+        </h4>
+        <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+        </button>
+        </div>
+        <!-- Material input -->
+        <div class="row">
+        <div class="md-form w-75">
+            <i class="fas fa-user prefix"></i>
+            <input type="text" id="newcheck" class="form-control">
+            <label for="newcheck">추가하기</label>
+            </div>
+            <button type="button" id="newcheckbtn" class="btn btn-sm btn-default px-3 text-right">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div id="checkarea">
+
+        </div>
+    </div>
+
+
+    <div class="container">
+<!-- (btnId, btnName, modalId, hId, msg, fn='') -->
+
+    {{modalmcr('default float-right', 'savebtn','save', '저장하기', 'saveModal', '저장하시겠습니까?')}}
+    </div>
+</div>

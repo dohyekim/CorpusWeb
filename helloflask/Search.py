@@ -145,9 +145,6 @@ class ElasticSearch():
 
             show['tags'] = tagrows[0][0].split(',')
             tshows.append(show)
-            # sort_students = sorted(students, key = lambda stu: stu.score)
-            # tshows.sort(reverse=True)
-            # dic = sorted(dic.items(), key=lambda d: d[1]['ranking'])
             tshowss = sorted(tshows, key = lambda t:t['number'], reverse=True)
             n+=1
         print(tshowss)

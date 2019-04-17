@@ -64,17 +64,18 @@ class Checklist(Base):
 
     id = Column(Integer, primary_key = True)
     user_id = Column(Integer, ForeignKey('User.id'))
+    name = Column(String)
     checklist = Column(String)
     user = relationship('User')
 
-    def __init__(self, user_id, checklist):
+    def __init__(self, user_id, name, checklist):
         self.user_id = user_id
+        self.name = name
         self.checklist = checklist
-        
 
     #tostring
     def __repr__(self):
-        return '%s, %s' %(self.user_id, self.checklist)
+        return '%s, %s, %s' %(self.user_id, self.name, self.checklist)
     
     def json (self) :
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}

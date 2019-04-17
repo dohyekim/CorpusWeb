@@ -15,12 +15,23 @@ def main():
     session['next'] = request.url
     return render_template('main.htm', title="Main")
 
+@app.route('/checklist/<userid>')
+def checklist(userid):
+    userid = session['loginUser']['userid']
+    check = Checklist.query.options(subqueryload(Checklist.user)).filter('user_id = :userid').params(userid=userid).all()
+    checklst = []
+    for c in check:
+        checklst.append(c.json())
+    return jsonify(checklst)
+
+
+
 @app.route('/posting/save/<userid>', methods=['POST'])
 def save(userid):
     j={}
     savelst = request.json
-    print("sssssssssssssssssssssssssssssssssssssssssss> ", savelst)
-    c = Checklist(userid, savelst['checklist'])
+    print("sssssssssssssssssssssssssssssssssssssssssss> ", savelst['checklist'], len(savelst['checklist']))
+    c = Checklist(userid, savelst['name'], savelst['checklist'])
     try:
         db_session.add(c)
         db_session.commit()
@@ -81,8 +92,9 @@ def postwrite():
 @app.route('/posting/write', methods=['GET'])
 def getwrite():
     if session.get('loginUser'):
+        userid = session['loginUser']['userid']
         form = PostForm()
-        return render_template('write.htm', title="New Post")
+        return render_template('write.htm', title="New Post", userid=userid)
 
     else:
         session['next'] = request.url

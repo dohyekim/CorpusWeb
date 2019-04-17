@@ -1,5 +1,6 @@
 
 {%extends 'layout.htm'%}
+{%from "macro/modalmacro.htm" import modalmcr%}
 {%block main%}
 
   <!--Main layout-->
@@ -39,7 +40,7 @@
                   </td>
                   <td>
                     <div class="custom-control custom-checkbox ml-2">
-                        <input type="checkbox" class="custom-control-input" id="del{{@index}}">
+                        <input type="checkbox" name="delcheckbox" class="custom-control-input" id="del{{@index}}">
                         <label class="custom-control-label" for="del{{@index}}"></label>
                     </div>
                   </td>
@@ -54,31 +55,8 @@
             <div>
             <a class="btn btn-info btn-md" href="/posting/write"> 글쓰기 </a>
             </div>
-            <!-- modal -->
-            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delconfirmmodal">
-                삭제하기
-            </button>
-            <div class="modal fade" id="delconfirmmodal" tabindex="-1" role="dialog" aria-labelledby="delconfirm"
-              aria-hidden="true">
-              <div class="modal-dialog modal-sm" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title w-100" id="myModalLabel">확인 메시지</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    정말 삭제하시겠습니까?
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-info btn-sm" data-dismiss="modal">아니오</button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="delPost()">예</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- /modal -->
+            {% call modalmcr('danger','delbtn', 'del','삭제하기','delconfirmmodal', '정말 삭제하시겠습니까?', 'delPost()') %}
+            {% endcall%}
           </div>
           <table id="postingtable" class="table table-hover">
               <thead>
@@ -119,7 +97,7 @@
                   <h4 class="card-title"> 
                   <i class="fas fa-user prefix"></i>
                   <input type="text" id="newchecklist" class="form-control">
-                  <label id = "newchecklistlabel" for="newchecklist">이름</label>
+                  <label id = "newchecklistlabel" for="newchecklist"></label>
                 </h4>
                 <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
                   <i class="fas fa-plus" aria-hidden="true"></i>
@@ -143,7 +121,10 @@
 
 
                 <div class="container">
-                  <button id="save" class="btn btn-sm btn-default float-right" type="button">저장하기</button>
+            <!-- (btnId, btnName, modalId, hId, msg, fn='') -->
+
+                  {% call modalmcr('default float-right', 'savebtn','save', '저장하기', 'saveModal', '저장하시겠습니까?') %}
+                  {%endcall%}
                 </div>
               </div>
             </div>
@@ -163,24 +144,25 @@
 
 function newchecklist() {
   var labelName = $('#newchecklist').val();
-  console.log(labelName);
+  if ($('#newchecklist').val() == '') {
+    alert('체크리스트의 이름을 정해주세요!!!')
+    return
+  }
   $('#newchecklistarea').html('<h4>' + labelName + '</h4>')
 }
 
 var ids = 1;
 $('#newcheckbtn').click( function() {
-  if ($('#newchecklistarea').val() == '') {
-    alert("체크리스트의 이름을 정해주세요!")
+  if ($('#newchecklistarea').text().trim() == '') {
+    alert("체크리스트 이름을 먼저 정해주세요")
     return
   }
   var txt = $('#newcheck').val();
-  console.log("Txt>>>>>>", txt)
   $('#newcheck').val('');
   var htmls = '<div class="custom-control custom-checkbox" id="checkboxarea' + String(ids) + '"> \
   <input type="checkbox" class="custom-control-input checknew" id="checknew' + String(ids) + '"' + '>\
   <label class="custom-control-label checknew" id="newlabel' + String(ids) + '"' + '\
   for="checknew' + String(ids) + '"></label></div>';
-  console.log("htmls>>", htmls)
   $(htmls).appendTo('#checkarea')
   $('#newlabel' + String(ids)).text(txt);
   ids = ids + 1;
@@ -190,13 +172,11 @@ $('#newcheckbtn').click( function() {
 });
 
 function setYellow() {
-  console.log("hhh")
   $('input.checknew').each(function () {
     $(this).next('label').css('background-color', 'white');
   })
   
   $('input.checknew:checked').each(function () {
-    console.log("hhhhhhhhh")
     $(this).next('label').css('background-color', 'yellow');
   })
 }
@@ -208,8 +188,8 @@ $('#save').click( function() {
   for (var i = 1; i <= l; i++) {
     savedt.push($('#newlabel' + String(i)).text())
   };
-    savedata['checklist'] = savedt;
-  console.log("savedata", savedata)
+    savedata['checklist'] = savedt.join(', ');
+    savedata['name'] = $('#newchecklistarea').text().trim();
   $.ajax({
     url : '/posting/save/{{userid}}',
     data : JSON.stringify(savedata),
@@ -223,6 +203,7 @@ $('#save').click( function() {
       else {
         alert('저장 성공!')
       }
+      closeModal('saveModal')
     }).fail( function(res) {
       console.log("Error!!", res)
     })
@@ -326,12 +307,22 @@ function comparetwo() {
     })
   }
 
+$('#delbtn').click( function() {
+  if ($('input:checkbox[name="delcheckbox"]:checked').length == 0) {
+    $('#delbtn').removeAttr('data-target')
+    alert("삭제할 게시물을 선택해주세요!")
+    return
+  }
+}); 
+
 function delPost(userid) {
   var postids = $('tr[id]')
-  
-  for (var i=0; i<=data.length; i++) {
+  var cnt = []
+  for (var i=0; i<data.length; i++) {
     var postid = postids[i]['id']
     if ($("input:checkbox[id='del" + String(i) + "'" + "]").is(":checked") == true){ 
+      cnt.push(i)
+      console.log("length>>>>>>>>", cnt.length)
       $.ajax({
           url:'/posting/delete/{{userid}}/' + postid,
           type:'DELETE'
@@ -340,13 +331,8 @@ function delPost(userid) {
           location.href='/posting'
         })
       }
-    else {
-      alert("삭제할 게시물을 선택해주세요!")
-      $('#delconfirmmodal').modal('hide')
-      return
     }
   }
-};
   
   </script>
 
