@@ -2,7 +2,7 @@
 {%from "macro/modalmacro.htm" import modalmcr%}
 {%block main%}
 <div class=" col container content-section ml-5 mt-5 pt-5">
-    <form method="POST" action="">
+    <form method="POST" action="/posting/write"></form>
         <div class="md-form col-9">
             <i class="fas fa-user prefix"></i>
             <input type="text" id="inputIconEx2" name = "title" class="form-control">
@@ -17,19 +17,23 @@
 
                 <div class="d-flex align-items-center col-3 mt-3">
                     
-                    <form action="post/write">
+                
                 {%call modalmcr('default', 'loadChcklist', 'load', 'Checklist 불러오기', 'loadModal', '선택해주세요', 'submit')%}
                     {%raw%}
+                   
                     <script id="name-template" type="text/x-handlebars-template">
+                       
                         {{#each chckdata}}
                         <option id="chck{{@index}}" value="{{@index}}">{{name}}</option>
                         {{/each}}
                     </script>
                     {%endraw%}
+
                     
-                    <select id="namelist-{{userid}}" name="namelist-{{userid}}" class="browser-default custom-select">
+                    <select id="namelist" name="namelist" class="browser-default custom-select">
                     </select>
-                    </form>
+                
+
                 {%endcall%}
 
                     <!-- Card -->
@@ -82,7 +86,7 @@ function hbs(sourceId, data, resultId) {
       chcktemplate = template;
       render(chcktemplate, data, resultId)
     }
-    else if(resultId === 'namelist-{{userid}}') {
+    else if(resultId === 'namelist') {
         nametemplate = template;
         render(nametemplate, data, resultId)
     }    
@@ -100,7 +104,7 @@ $('#loadChcklist').click( function() {
         console.log("res>>>>>>", res)
         chckdata = res;
         console.log("checkdata>>>>>", chckdata)
-        hbs('name-template', {chckdata:chckdata}, 'namelist-{{userid}}')
+        hbs('name-template', {chckdata:chckdata}, 'namelist')
         hbs("checklist-template", res, 'checklist')
     }).fail(function(res) {
         console.log("Error!!! ", res)

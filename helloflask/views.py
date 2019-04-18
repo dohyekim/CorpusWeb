@@ -67,6 +67,18 @@ def delpost(userid, postid):
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
 
+
+@app.route("/posting/write/checklist", methods=['GET'])
+def postchecklist():
+    userid = session['loginUser']['userid']
+    select = request.args.get('namelist')
+
+    print('dddddddddddddddddddddddddddddddddd', select)  
+    print('dddddddddddddddddddddddddddddddddd', userid)
+        
+    return redirect('/posting/write')
+
+
 @app.route('/posting/write', methods=['POST'])
 def postwrite():
 
@@ -75,6 +87,7 @@ def postwrite():
     title = request.form.get('title')
     content = request.form.get('content')
     select = request.form.get('namelist-' + str(userid))
+        
     # if select:
         
     print("select>>>>>>", select)
