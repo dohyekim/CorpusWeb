@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="d-flex align-items-center col-3 mt-3">
-                    {%call modalmcr('default', 'loadChcklist', 'load', 'Checklist 불러오기', 'loadModal', '선택해주세요')%}
+                    {%call modalmcr('default', 'loadChcklist', 'load', 'Checklist 불러오기', 'loadModal', '선택해주세요', 'submit')%}
                     {%raw%}
                     <script id="name-template" type="text/x-handlebars-template">
                         {{#each chckdata}}
@@ -25,7 +25,7 @@
                     </select>
                 </script>
                 {%endraw%}
-                <select id="namelist-{{userid}}" class="browser-default custom-select">
+                <select id="namelist-{{userid}}" name="namelist-{{userid}}" class="browser-default custom-select">
                     <option selected> 선택하기 </option>
 
                 </select>
@@ -65,7 +65,7 @@
 <script>
 
 function load() {
-    $('#namelist-3 option:selected').text()
+    $('#namelist-{{userid}} option:selected').text()
 }
 
 var chcktemplate;

@@ -73,11 +73,8 @@ def postwrite():
     userid = session['loginUser']['userid']
     title = request.form.get('title')
     content = request.form.get('content')
-    # postid = Post.query.filter('user_id=:userid').params(userid = userid).count() + 1
-    # print("title>>>>", title)
-    # print("content>>>>", content)
-    # print("postid>>>>", postid)
-    # print("userid>>>>", userid)
+    select = request.form.get('namelist-' + 'userid')
+    print("select>>>>>>", select)
     post = Post(title, content, loginUser.get('userid'))
     try:
         db_session.add(post)
@@ -93,7 +90,7 @@ def postwrite():
 def getwrite():
     if session.get('loginUser'):
         userid = session['loginUser']['userid']
-        form = PostForm()
+
         return render_template('write.htm', title="New Post", userid=userid)
 
     else:
