@@ -3,12 +3,13 @@
 <button id="{{btnId}}" type="button" class="btn btn-sm btn-{{btnColor}}" data-toggle="modal" data-target="#{{modalId}}">
     {{btnName}}
 </button>
+
 <div class="modal fade" id="{{modalId}}" tabindex="-1" role="dialog" aria-labelledby="delconfirm"
     aria-hidden="true">
     <div class="modal-dialog modal-notify modal-warning" role="document">
     <div class="modal-content">
         <div class="modal-header text-center">
-            <h4 class="modal-title white-text w-100 font-weight-bold py-2" id="{{hId}}">확인 메시지</h4>
+            <h4 class="modal-title white-text w-100 font-weight-bold py-2" >확인 메시지</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true" class="white-text">&times;</span>
             </button>
@@ -19,11 +20,12 @@
         </div>
         <div class="modal-footer justify-content-center">
         <button type="button" class="btn btn-info btn-sm" data-dismiss="modal">아니오</button>
-        <a id="{{yesbtnId}}" type="{{type}}" class="btn btn-outline-warning waves-effect" onclick="{{fn}}">예</a>
+        <button id="{{yesbtnId}}" type="{{type}}" class="btn btn-outline-warning waves-effect" onclick="{{fn}}">예</a>
         </div>
     </div>
     </div>
 </div>
+
 {% endmacro %}
 <!-- /modal -->
 <!-- myModalLabel -->

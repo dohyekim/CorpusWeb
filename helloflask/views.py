@@ -69,20 +69,26 @@ def delpost(userid, postid):
 
 @app.route('/posting/write', methods=['POST'])
 def postwrite():
+
     loginUser = session.get('loginUser')
     userid = session['loginUser']['userid']
     title = request.form.get('title')
     content = request.form.get('content')
-    select = request.form.get('namelist-' + 'userid')
+    select = request.form.get('namelist-' + str(userid))
+    # if select:
+        
     print("select>>>>>>", select)
     post = Post(title, content, loginUser.get('userid'))
+
     try:
         db_session.add(post)
         db_session.commit()
         print("Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
     except Exception as err:
         db_session.rollback()
         print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
+
     return redirect('/posting')
 
 

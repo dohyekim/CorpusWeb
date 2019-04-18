@@ -16,20 +16,22 @@
                 </div>
 
                 <div class="d-flex align-items-center col-3 mt-3">
-                    {%call modalmcr('default', 'loadChcklist', 'load', 'Checklist 불러오기', 'loadModal', '선택해주세요', 'submit')%}
+                    
+                    <form action="post/write">
+                {%call modalmcr('default', 'loadChcklist', 'load', 'Checklist 불러오기', 'loadModal', '선택해주세요', 'submit')%}
                     {%raw%}
                     <script id="name-template" type="text/x-handlebars-template">
                         {{#each chckdata}}
                         <option id="chck{{@index}}" value="{{@index}}">{{name}}</option>
                         {{/each}}
+                    </script>
+                    {%endraw%}
+                    
+                    <select id="namelist-{{userid}}" name="namelist-{{userid}}" class="browser-default custom-select">
                     </select>
-                </script>
-                {%endraw%}
-                <select id="namelist-{{userid}}" name="namelist-{{userid}}" class="browser-default custom-select">
-                    <option selected> 선택하기 </option>
-
-                </select>
+                    </form>
                 {%endcall%}
+
                     <!-- Card -->
                     <div class="card">
                 
