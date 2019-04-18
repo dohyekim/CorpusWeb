@@ -20,13 +20,14 @@
                     {%raw%}
                     <script id="name-template" type="text/x-handlebars-template">
                         {{#each chckdata}}
-                        <option value="@index">{{name}}</option>
+                        <option id="chck{{@index}}" value="{{@index}}">{{name}}</option>
                         {{/each}}
                     </select>
                 </script>
                 {%endraw%}
-                <select id="namelist" class="browser-default custom-select">
+                <select id="namelist-{{userid}}" class="browser-default custom-select">
                     <option selected> 선택하기 </option>
+
                 </select>
                 {%endcall%}
                     <!-- Card -->
@@ -63,8 +64,13 @@
 
 <script>
 
+function load() {
+    $('#namelist-3 option:selected').text()
+}
+
 var chcktemplate;
 var chckdata = {};
+var nametemplate;
 
 function hbs(sourceId, data, resultId) {
   var source = document.getElementById(sourceId).innerHTML;
@@ -72,7 +78,11 @@ function hbs(sourceId, data, resultId) {
   if (resultId === 'checklist'){
       // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
       chcktemplate = template;
-      render(template, data, resultId)
+      render(chcktemplate, data, resultId)
+    }
+    else if(resultId === 'namelist-{{userid}}') {
+        nametemplate = template;
+        render(nametemplate, data, resultId)
     }    
   } 
 function render(template, data, resultId) {
@@ -87,7 +97,8 @@ $('#loadChcklist').click( function() {
     }).done(function (res) {
         console.log("res>>>>>>", res)
         chckdata = res;
-        hbs('name-template', {chckdata:chckdata}, 'namelist')
+        console.log("checkdata>>>>>", chckdata)
+        hbs('name-template', {chckdata:chckdata}, 'namelist-{{userid}}')
         hbs("checklist-template", res, 'checklist')
     }).fail(function(res) {
         console.log("Error!!! ", res)
