@@ -6,21 +6,15 @@
   <!--Main layout-->
 <main class="mt-5 pt-5">
   <div class="container">
-
     <!--Section: Post-->
     <section class="mt-4">
-
       <!--Grid row-->
       <div class="row">
-
         <!--Grid column-->
-        <div class="mb-4 col-8">
-
+        <div class="mb-4">
           <!--Featured Image-->
           <div class="card mb-4 wow fadeIn">
-
             <img src="https://mdbootstrap.com/img/Photos/Slides/img%20(144).jpg" class="img-fluid" alt="">
-
           </div>
           <!--/.Featured Image-->
           <script id="table-template-{{userid}}" type="text/x-handlebars-template">
@@ -59,84 +53,78 @@
             {% endcall%}
           </div>
           <table id="postingtable" class="table table-hover">
-              <thead>
-                  <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">작성자</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">비교</th>
-                    <th scope="col">삭제</th>
-                  </tr>
-                </thead>
-                <tbody id="postingbody-{{userid}}">
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <!--Grid row-->
+            <thead>
+              <tr>
+                <th scope="col">No</th>
+                <th scope="col">작성자</th>
+                <th scope="col">Title</th>
+                <th scope="col">Date</th>
+                <th scope="col">비교</th>
+                <th scope="col">삭제</th>
+              </tr>
+            </thead>
+            <tbody id="postingbody-{{userid}}">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!--Grid row-->
           
-          <div class="row">
-          <!--Card-->
-            <div class="col card mb-4 wow fadeIn">
-              <!--Card content-->
-              <div class="card-body text-center">
-                <p class="h5 my-4">비교</p>
-                <p id="compare-content">비교하고 싶은 글을 최대 2개 선택해주세요.</p>
-              </div>
+    <!--Card-->
+    <div class="row">
+      <div class="col card mb-4 wow fadeIn">
+        <!--Card content-->
+        <div class="card-body text-center">
+          <p class="h5 my-4">비교</p>
+          <p id="compare-content">비교하고 싶은 글을 최대 2개 선택해주세요.</p>
+        </div>
+      </div>
+      <!--/.Card-->
+      <!-- Card -->
+      <div class="card col-4 ml-4 h-auto">
+          <!-- Card content -->
+          <div class="card-body">
+            <!-- Title -->
+            <div class="md-form" id="newchecklistarea">
+              <h4 class="card-title"> 
+              <i class="fas fa-user prefix"></i>
+              <input type="text" id="newchecklist" class="form-control">
+              <label id = "newchecklistlabel" for="newchecklist"></label>
+            </h4>
+            <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
+              <i class="fas fa-plus" aria-hidden="true"></i>
+            </button>
             </div>
-            <!--/.Card-->
-
-        <!--Grid column-->
-            <!-- Card -->
-            <div class="card col-4 ml-4 h-auto">
-              <!-- Card content -->
-              <div class="card-body">
-                <!-- Title -->
-                <div class="md-form" id="newchecklistarea">
-                  <h4 class="card-title"> 
-                  <i class="fas fa-user prefix"></i>
-                  <input type="text" id="newchecklist" class="form-control">
-                  <label id = "newchecklistlabel" for="newchecklist"></label>
-                </h4>
-                <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
+            <!-- Material input -->
+            <div class="row">
+              <div class="md-form w-75">
+                <i class="fas fa-user prefix"></i>
+                <input type="text" id="newcheck" class="form-control">
+                <label for="newcheck">추가하기</label>
+                </div>
+                <button type="button" id="newcheckbtn" class="btn btn-sm btn-default px-3 text-right">
                   <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
-                </div>
-                <!-- Material input -->
-                <div class="row">
-                  <div class="md-form w-75">
-                    <i class="fas fa-user prefix"></i>
-                    <input type="text" id="newcheck" class="form-control">
-                    <label for="newcheck">추가하기</label>
-                    </div>
-                    <button type="button" id="newcheckbtn" class="btn btn-sm btn-default px-3 text-right">
-                      <i class="fas fa-plus" aria-hidden="true"></i>
-                    </button>
-                  </div>
-                  <div id="checkarea">
+              </div>
+              <div id="checkarea">
 
-                  </div>
-                </div>
-
-
-                <div class="container">
-            <!-- (btnId, btnName, modalId, hId, msg, fn='') -->
-
-                  {% call modalmcr('default float-right', 'savebtn','save', '저장하기', 'saveModal', 'button', '저장하시겠습니까?') %}
-                  {%endcall%}
-                </div>
               </div>
             </div>
+
+
+            <div class="container">
+        <!-- (btnId, btnName, modalId, hId, msg, fn='') -->
+
+              {% call modalmcr('default float-right', 'savebtn','save', '저장하기', 'saveModal', '저장하시겠습니까?', 'button') %}
+              {%endcall%}
+            </div>
           </div>
-            <!-- Card -->
-
-
+        </div>
+      </div>
+    </div>
     </section>
+  </div>
     <!--Section: Post-->
-    
-
-
 </main>
 <!--Main layout-->
 
@@ -185,6 +173,11 @@ var savedata = {};
 var savedt = []
 $('#save').click( function() {
   var l = $('input.checknew').next('label').length;
+  if (l == 0) {
+    alert("체크리스트를 먼저 만들어주세요!")
+    closeModal('saveModal')
+    return
+  } 
   for (var i = 1; i <= l; i++) {
     savedt.push($('#newlabel' + String(i)).text())
   };
@@ -315,24 +308,21 @@ $('#delbtn').click( function() {
   }
 }); 
 
+
 function delPost(userid) {
   var postids = $('tr[id]')
   var cnt = []
   for (var i=0; i<data.length; i++) {
-    var postid = postids[i]['id']
+    var postid = postids[i]['id'];
     if ($("input:checkbox[id='del" + String(i) + "'" + "]").is(":checked") == true){ 
       cnt.push(i)
       console.log("length>>>>>>>>", cnt.length)
-      $.ajax({
-          url:'/posting/delete/{{userid}}/' + postid,
-          type:'DELETE'
-        }).done(function(res){
-          console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!deleted")
-          location.href='/posting'
-        })
-      }
+      delAjax('/posting/delete/{{userid}}/' + postid, function location(res) {
+        window.location.href = '/posting';
+      });
     }
   }
+}
   
   </script>
 

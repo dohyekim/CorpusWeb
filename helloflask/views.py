@@ -1,7 +1,7 @@
 from helloflask import app
 from flask import Flask, render_template, url_for, jsonify, request, flash, session, redirect, Response, make_response
 from helloflask.init_db import init_database, db_session
-from helloflask.models import Talk, User, Post, Checklist
+from helloflask.models import Talk, User, Post, Checklist, Memo
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import subqueryload, joinedload
 from sqlalchemy.sql import func
@@ -67,17 +67,53 @@ def delpost(userid, postid):
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
 
+@app.route('/checklist/delete/<userid>/<id>', methods=['DELETE'])
+def delchecklist(userid, id):
+    print("delete view")
+    dchecklist = Checklist.query.filter('user_id=:userid and id=:id').params(userid=userid,id=id).first()
+    try:
+        db_session.delete(dchecklist)
+        db_session.commit()
+        print("-------------------------------------------------Delete success")
+        return ''
+    except Exception as err:
+        db_session.rollback()
+        print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
+        return ''
 
-@app.route("/posting/write/checklist", methods=['GET'])
-def postchecklist():
+@app.route('/posting/memo', methods=['POST'])
+def postmemo():
+    mJson = {}
+    memoJson = request.json
+    print("\n\n\n\n\n\n", memoJson)
     userid = session['loginUser']['userid']
-    select = request.args.get('namelist')
+    title = memoJson['title']
+    memo = memoJson['memo']
+    m = Memo(userid, title, memo)
+    try:
+        db_session.add(m)
+        db_session.commit()
+        mJson['status'] = 'success'
+        print("Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
-    print('dddddddddddddddddddddddddddddddddd', select)  
-    print('dddddddddddddddddddddddddddddddddd', userid)
-        
-    return redirect('/posting/write')
+    except Exception as err:
+        db_session.rollback()
+        mJson['status'] = 'fail'
+        print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
+    return jsonify(mJson)
 
+@app.route("/posting/write/checklist", methods=['POST'])
+def postchecklist():
+    loadJson = request.json
+    # print("lllllllllllllllllllll", loadJson)
+    userid = session['loginUser']['userid']
+    name = loadJson['name']
+    # print("name>>", name)
+    check = Checklist.query.options(subqueryload(Checklist.user)).filter('user_id = :userid and name = :name').params(userid=userid, name=name).first()
+    # print("ccccccccccccccccccC>", type(check))
+    checkJson = check.json()
+    checkJson['checklist'] = checkJson['checklist'].split(",")
+    return jsonify(checkJson)
 
 @app.route('/posting/write', methods=['POST'])
 def postwrite():

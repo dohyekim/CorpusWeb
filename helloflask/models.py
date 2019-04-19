@@ -58,6 +58,35 @@ class User(Base):
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         return j
 
+
+# create table Memo(
+# 	id int unsigned auto_increment primary key,
+#     user_id int unsigned not null,
+#     title varchar(256) not null unique key,
+#     memo text not null
+# );
+class Memo(Base):
+    __tablename__='Memo'
+
+    id = Column(Integer, primary_key = True)
+    user_id = Column(Integer, ForeignKey('User.id'))
+    title = Column(String)
+    memo = Column(String)
+    user = relationship('User')
+
+    def __init__(self, user_id, title, memo):
+        self.user_id = user_id
+        self.title = title
+        self.memo = memo
+
+    #tostring
+    def __repr__(self):
+        return '%s, %s, %s' %(self.user_id, self.memo, self.user)
+    
+    def json (self) :
+        j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return j
+
 class Checklist(Base):
     # Table created at Mysql5(workbench)
     __tablename__='Checklist'

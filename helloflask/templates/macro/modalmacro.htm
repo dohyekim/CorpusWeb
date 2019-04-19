@@ -14,16 +14,15 @@
                 <span aria-hidden="true" class="white-text">&times;</span>
             </button>
         </div> 
-        <form methods="POST" action="/posting/write/checklist">  
         <div class="modal-body">
             {{msg}}
             {{caller()}}
         </div>
         <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-info btn-sm" data-dismiss="modal">아니오</button>
+        <button type="button" class="btn btn-outline-info waves-effect" data-dismiss="modal">아니오</button>
         <button id="{{yesbtnId}}" type="{{type}}" class="btn btn-outline-warning waves-effect" onclick="{{fn}}">예</a>
+
         </div>
-        </form>
     </div>
     </div>
 </div>
