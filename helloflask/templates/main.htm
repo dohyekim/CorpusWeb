@@ -266,6 +266,7 @@ $('#memo').click( function() {
       }
       else {
         alert('저장 성공!')
+        $('#memobtn').css('display', 'none')
       }
       closeModal('memoModal')
     }).fail( function(res) {

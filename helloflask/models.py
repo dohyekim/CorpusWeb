@@ -70,18 +70,18 @@ class Memo(Base):
 
     id = Column(Integer, primary_key = True)
     user_id = Column(Integer, ForeignKey('User.id'))
-    title = Column(String)
+    name = Column(String)
     memo = Column(String)
     user = relationship('User')
 
-    def __init__(self, user_id, title, memo):
+    def __init__(self, user_id, name, memo):
         self.user_id = user_id
-        self.title = title
+        self.name = name
         self.memo = memo
 
     #tostring
     def __repr__(self):
-        return '%s, %s, %s' %(self.user_id, self.memo, self.user)
+        return '%s, %s, %s, %s' %(self.user_id, self.memo, self.user, self.name)
     
     def json (self) :
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}

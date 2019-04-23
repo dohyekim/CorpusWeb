@@ -15,6 +15,16 @@ def main():
     session['next'] = request.url
     return render_template('main.htm', title="Main")
 
+@app.route('/memo/<userid>')
+def memo(userid):
+    userid = session['loginUser']['userid']
+    memo = Memo.query.options(subqueryload(Memo.user)).filter('user_id = :userid').params(userid=userid).all()
+    memolst = []
+    for m in memo:
+        memolst.append(m.json())
+    print("memolist>>>>>>>>>", memolst)
+    return jsonify(memolst)
+
 @app.route('/checklist/<userid>')
 def checklist(userid):
     userid = session['loginUser']['userid']
@@ -22,6 +32,7 @@ def checklist(userid):
     checklst = []
     for c in check:
         checklst.append(c.json())
+    print("memolist>>>>>>>>>", checklst)    
     return jsonify(checklst)
 
 
@@ -81,6 +92,20 @@ def delchecklist(userid, id):
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
 
+@app.route('/memo/delete/<userid>/<id>', methods=['DELETE'])
+def delmemo(userid, id):
+    dmemo = Memo.query.filter('user_id =:userid and id=:id').params(userid=userid, id=id).first()
+    try:
+        db_session.delete(dmemo)
+        db_session.commit()
+        print("-----------SUCCESSFULLY DELETED MEMO---------------")
+        return ''
+    except Exception as err:
+        db_session.rollback()
+        print("Failed to delete the memo", err)
+        return ''
+################# delete 라우터 만들고 (memo)
+############## memo/checklist 페이지 만들기
 @app.route('/posting/memo', methods=['POST'])
 def postmemo():
     mJson = {}
@@ -112,8 +137,18 @@ def postchecklist():
     check = Checklist.query.options(subqueryload(Checklist.user)).filter('user_id = :userid and name = :name').params(userid=userid, name=name).first()
     # print("ccccccccccccccccccC>", type(check))
     checkJson = check.json()
-    checkJson['checklist'] = checkJson['checklist'].split(",")
+    checkJson['lists'] = checkJson['checklist'].split(",")
     return jsonify(checkJson)
+
+@app.route('/posting/write/memolist', methods=['POST'])
+def postmemolist():
+    loadJson = request.json
+    userid = session['loginUser']['userid']
+    name = loadJson['name']
+    memo = Memo.query.options(subqueryload(Memo.user)).filter('user_id = :userid and name = :name').params(userid=userid, name=name).first()
+    memoJson = memo.json()
+    memoJson['lists'] = memoJson['memo'].split(",")
+    return jsonify(memoJson)
 
 @app.route('/posting/write', methods=['POST'])
 def postwrite():
@@ -122,11 +157,10 @@ def postwrite():
     userid = session['loginUser']['userid']
     title = request.form.get('title')
     content = request.form.get('content')
-    select = request.form.get('namelist-' + str(userid))
         
     # if select:
-        
-    print("select>>>>>>", select)
+    print("ccc>> ", content)
+    print("title>> ", title)
     post = Post(title, content, loginUser.get('userid'))
 
     try:

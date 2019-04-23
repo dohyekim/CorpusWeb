@@ -2,6 +2,7 @@
 {%from "macro/modalmacro.htm" import modalmcr%}
 {%block main%}
 <div class="col container content-section ml-5 mt-5 pt-5">
+    <form method="POST" action="/posting/write">
         <div class="md-form col-9">
             <i class="fas fa-user prefix"></i>
             <input type="text" id="inputIconEx2" name = "title" class="form-control">
@@ -13,17 +14,42 @@
                 <!-- Card content -->
                 <div class="card-body text-center">
                     <!-- Title -->
-                    <h4 class="card-title">메모</h4> <br>
-                    <!-- Text -->
-                    <p class="card-text">
-
-                    </p>
+                    <div class="row">
+                        <h4 class="card-title">메모</h4>
+                    </div>
+                    {%call modalmcr('default', 'loadMemo', 'mload', 'Memo 불러오기', 'mloadModal', '선택해주세요', 'button')%}
+                    <select id="memolist" name="memolist" class="browser-default custom-select">
+                    </select>
+                    {%endcall%}
+                    <div>
+                        <button id="delmemoBtn" type="button" class="btn btn-sm btn-danger" style="display:none">Memo 삭제하기</button>
+                    </div>
+                    
                 </div>
+
+                <div class="card-body">
+                    {% raw %}
+                    <script id="memo-template" type="text/x-handlebars-template">
+                    <h4 class="card-title"> {{loadData.name}} </h4>
+                    <!-- Title -->
+                    <!-- Default unchecked -->
+                    {{# each loadData.lists}}
+                    <div class="custom-control custom-checkbox">
+                        {{this}}
+                    </div>
+                    {{/each}}
+                    </script>
+                    {% endraw%}
+                    
+                    <div id="memo-result">
+                    </div>
+                </div>
+
             </div>
             <!-- Card -->
 
-            <!-- Card -->
-            <div class="col-5 ml-5 card">
+           <!-- Card -->
+           <div class="col-5 ml-5 card">
                 <!-- Card content -->
                 <div class="pb-1 card-body text-center">
                     <!-- Title -->
@@ -34,8 +60,8 @@
                     {%call modalmcr('default', 'loadChcklist', 'load', 'Checklist 불러오기', 'loadModal', '선택해주세요', 'button')%}
                     {%raw%}
                     <script id="name-template" type="text/x-handlebars-template">
-                        {{#each chckdata}}
-                        <option id="chck{{@index}}" value="{{@index}}">{{name}}</option>
+                        {{#each data}}
+                        <option value="{{@index}}">{{name}}</option>
                         {{/each}}
                     </script>
                     {%endraw%}
@@ -43,7 +69,7 @@
                     </select>
                     {%endcall%}
                     <div id="del">
-                        <button id="delcheckBtn" class="btn btn-sm btn-danger" style="display:none">checklist 삭제하기</button>
+                        <button id="delcheckBtn" type="button" class="btn btn-sm btn-danger" style="display:none">checklist 삭제하기</button>
                     </div>
                 <!-- Card content -->
                 </div>
@@ -53,7 +79,7 @@
                     <h4 class="card-title"> {{loadData.name}} </h4>
                     <!-- Title -->
                     <!-- Default unchecked -->
-                    {{# each loadData.checklist}}
+                    {{# each loadData.lists}}
                     <div id="check{{@index}}" class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="load{{@index}}">
                         <label class="custom-control-label" for="load{{@index}}">{{this}}</label>
@@ -67,36 +93,46 @@
                 </div>
             </div>
         </div>
-            <!-- Card -->
         <!-- 텍스트 -->
         <div class="row">
             <div class=" col-9 md-form amber-textarea active-amber-textarea">
                 <i class="fas fa-pencil-alt prefix"></i>
-                <textarea class="form-control z-depth-1" name="content" id="exampleFormControlTextarea6" rows="30"></textarea>
+                <textarea class="form-control z-depth-1" id="content" name="content" rows="30"></textarea>
             </div>
         </div>
-        <div class="row ml-5">
-            <div class="form-group text-right">
-                <button class="btn btn-info" type="submit">Post</button>
+            <div class="row ml-5">
+                <div class="form-group text-right">
+                    <button class="btn btn-info" type="submit">Post</button>
+                </div>
             </div>
-        </div>
+    </form>
 </div>
 
 
 <script>
 
-$('#delcheckBtn').click( function() {
-    delAjax('/checklist/delete/{{userid}}/'+String(loadData['id']), function ddddd() {
-        $('#check-result').text('')
+var checkId;
+var memoId;
+
+loadList('load', 'delcheckBtn', 'namelist', '/posting/write/checklist', 'check-template', 'check-result', 'loadModal')
+loadList('mload', 'delmemoBtn', 'memolist', '/posting/write/memolist', 'memo-template', 'memo-result', 'mloadModal')
+
+
+function delList(btnId, url, deldata, result) {
+    $('#' + btnId).click( function() {
+        delAjax(url+String(deldata), function ddddd() {
+            $('#' + result).text('');
+            $('#' + btnId).hide()
+        })
+
     })
-})
-function dddclick() {
-    console.log("Aaa")
-    
-};
+}
+
+
+
+
 
 var chcktemplate;
-var chckdata = {};
 var nametemplate;
 var loadtemplate;
 function hbs(sourceId, data, resultId) {
@@ -105,59 +141,95 @@ function hbs(sourceId, data, resultId) {
     if (resultId === 'checklist'){
         // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
         chcktemplate = template;
-        render(chcktemplate, data, resultId)
     }
-    else if(resultId === 'namelist') {
+    else if(resultId === 'namelist' | resultId === 'memolist')  {
         nametemplate = template;
-        render(nametemplate, data, resultId)
+        return
     }
     else if(resultId === 'check-result') {
         loadtemplate = template;
-        render(loadtemplate, data, resultId)
     }
-    
+    render(template, data, resultId)
   } 
 function render(template, data, resultId) {
   document.getElementById(resultId).innerHTML = template(data);
   } 
 
+function send_ajax(url, data, method, dataType, fn) {
+    $.ajax({
+    url : url,
+    data : data, 
+    type : method,
+    dataType: dataType
+    }).done(function (res) {
+    console.log("res>>>", res)
+    if (fn)
+        fn(res)
+    }).fail(function (xhr, status, errorThrown) {
+    console.error("Error!", xhr, status, errorThrown)
+    }).always(function (xhr, status) {
+    console.log("request complete")
+    });
+}
 
-var loadData = {};
-var loadJson = {};
-$('#load').click(function() {
-    $('#delcheckBtn').show()
-    var chck = $('#namelist option:selected').text();
+function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
+    var loadJson = {};
+    $('#' + btnId).click(function() {
+    $('#' + delbtnId).show()
+    
+    var chck = $('#' + listId + ' option:selected').text();
     loadJson['name'] = chck;
     $.ajax({
-        url : '/posting/write/checklist',
+        url : url,
         data : JSON.stringify(loadJson),
         type : 'POST',
         contentType:"application/json",
         dataType: 'json'
     }).done( function (res) {
-        console.log("Res>>>>>> ", res)
-        loadData = res;
-        console.log("loaddata>>>", loadData)
-        hbs('check-template', {loadData:loadData}, 'check-result')
-        closeModal('loadModal')
+        console.log("REs>>>>>", res)
+        if (resultId === 'check-result') {
+                console.log("id>>>>>>>>>>>>> ", res['id'])
+                console.log('/checklist/delete/{{userid}}' + checkId)
+                checkId = res['id'];
+                delList('delcheckBtn','/checklist/delete/{{userid}}/', checkId, 'check-result')
+            }
+            else {
+                memoId = res['id'];
+                console.log('/memo/delete/{{userid}}/' + memoId)
+                delList('delmemoBtn','/memo/delete/{{userid}}/', memoId, 'memo-result')
+            }
+
+        hbs(templateId, {'loadData':res}, resultId)
+        closeModal(modalId)
     }).fail( function(res) {
         console.log("Error!", res)
     })
 });
-
-$('#loadChcklist').click( function() {
-    $.ajax({
-        url : '/checklist/{{userid}}',
-        type : 'GET'
-    }).done(function (res) {
-        console.log("res>>>>>>", res)
-        chckdata = res;
-        console.log("checkdata>>>>>", chckdata)
-        hbs('name-template', {chckdata:chckdata}, 'namelist')
-    }).fail(function(res) {
-        console.log("Error!!! ", res)
-    })
+}
+$(document).ready(function () {
+    hbs('name-template', '', 'namelist')
 });
+
+
+
+loadCheckData('loadChcklist', '/checklist/{{userid}}', 'namelist')
+loadCheckData('loadMemo', '/memo/{{userid}}', 'memolist')
+function loadCheckData(buttonId, url, resultId) {
+    $('#' + buttonId).click( function () {
+        $.ajax({
+            url : url,
+            type : 'GET'
+        }).done(function (res) {
+            console.log("res>>>>>>", res)
+
+            render(nametemplate, {'data':res}, resultId)
+
+        }).fail(function(res) {
+            console.log("Error!!! ", res)
+        })
+    })
+}
+
 
 </script>
 

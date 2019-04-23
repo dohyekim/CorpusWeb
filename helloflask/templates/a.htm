@@ -108,3 +108,82 @@ $('#korsearch').click( function() {
 })
 
 </script>
+
+
+
+
+
+
+
+
+
+$('#loadChcklist').click( function() {
+  $.ajax({
+      url : '/checklist/{{userid}}',
+      type : 'GET'
+  }).done(function (res) {
+      console.log("res>>>>>>", res)
+      chckdata = res;
+      console.log("checkdata>>>>>", chckdata)
+      hbs('name-template', {chckdata:chckdata}, 'namelist')
+  }).fail(function(res) {
+      console.log("Error!!! ", res)
+  })
+});
+
+
+
+
+{%call modalmcr('default', 'loadMemo', 'mload', 'Memo 불러오기', 'mloadModal', '선택해주세요', 'button')%}
+{%raw%}
+<script id="name-template" type="text/x-handlebars-template">
+    {{#each 데이터이름}}
+    <option value="{{@index}}">{{name}}</option>
+    {{/each}}
+</script>
+{%endraw%}
+<select id="memolist" name="memolist" class="browser-default custom-select">
+</select>
+<div id="mdel">
+    <button id="mdelcheckBtn" class="btn btn-sm btn-danger" style="display:none">Memo 삭제하기</button>
+</div>
+{%endcall%}
+<!-- Text -->
+<p class="card-text">
+
+</p>
+
+
+
+$('#load').click(function() {
+  $('#delcheckBtn').show()
+  var chck = $('#namelist option:selected').text();
+  loadJson['name'] = chck;
+  $.ajax({
+      url : '/posting/write/checklist',
+      data : JSON.stringify(loadJson),
+      type : 'POST',
+      contentType:"application/json",
+      dataType: 'json'
+  }).done( function (res) {
+      console.log("Res>>>>>> ", res)
+      loadData = res;
+      console.log("loaddata>>>", loadData)
+      hbs('check-template', {loadData:loadData}, 'check-result')
+      closeModal('loadModal')
+  }).fail( function(res) {
+      console.log("Error!", res)
+  })
+});
+
+
+$('#delcheckBtn').click( function() {
+  delAjax('/checklist/delete/{{userid}}/'+String(loadData['id']), function ddddd() {
+      $('#check-result').text('')
+  })
+})
+
+
+delAjax('/checklist/delete/{{userid}}/'+String(deldata), function ddddd() {
+  $('#check-result').text('')
+})
