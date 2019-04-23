@@ -85,17 +85,20 @@
           <!-- Card content -->
           <div class="card-body">
             <!-- Title -->
-            <div class="md-form" id="newchecklistarea">
+            <div class="md-form" id="hideInput">
               <h4 class="card-title"> 
               <i class="fas fa-user prefix"></i>
               <input type="text" id="newchecklist" class="form-control">
               <label id = "newchecklistlabel" for="newchecklist"></label>
             </h4>
             <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
-              <i class="fas fa-plus" aria-hidden="true"></i>
-            </button>
+                <i class="fas fa-plus" aria-hidden="true"></i>
+              </button>
             </div>
-            <!-- Material input -->
+            <div class="md-form" id="newchecklistarea">
+              <h4 id="checktitle" class="card-title"> 
+            </div>
+              <!-- Material input -->
             <div id="afteradd" class="row">
               <div class="md-form w-75">
                 <i class="fas fa-user prefix"></i>
@@ -118,7 +121,7 @@
               {% call modalmcr('default float-right', 'savebtn','save', '저장하기', 'saveModal', '저장하시겠습니까?', 'button') %}
               {%endcall%}
               <div>
-                <button id="newbtn" class="btn btn-sm btn-primary px-3 float-right" type="button" style="display:none">새로 만들기</button>
+                <button id="newbtn" class="btn btn-sm btn-primary px-3 float-right" stype="display:none" type="button" >새로 만들기</button>
               </div>
             </div>
           </div>
@@ -133,11 +136,15 @@
 
 <script>
 
-function addchecklist() {
-  $('newbtn').click(function() {
-    
-  })
-}
+$('button#newbtn').click(function() {
+  $('button#newbtn').hide()
+  $('#savebtn').show()
+  $('#checktitle').hide()
+  $('#checkarea').hide()
+  $('#hideInput').show()
+  $('input#newchecklist').val('')
+  $('#afteradd').show()
+})
 
 function newchecklist() {
   var labelName = $('#newchecklist').val();
@@ -145,7 +152,9 @@ function newchecklist() {
     alert('체크리스트의 이름을 정해주세요!!!')
     return
   }
-  $('#newchecklistarea').html('<h4>' + labelName + '</h4>')
+  $('#newchecklistarea').show()
+  $('#checktitle').html('<h4>' + labelName + '</h4>')
+  $('#hideInput').hide()
 
 }
 
@@ -205,9 +214,9 @@ $('#save').click( function() {
       }
       else {
         alert('저장 성공!')
+        $('#newbtn').css('display', 'block')
         $('#afteradd').hide()
         $('#savebtn').hide()
-        $('#newbtn').css('display', 'block')
 
       }
       closeModal('saveModal')
