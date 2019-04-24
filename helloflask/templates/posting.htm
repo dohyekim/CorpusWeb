@@ -121,7 +121,7 @@
               {% call modalmcr('default float-right', 'savebtn','save', '저장하기', 'saveModal', '저장하시겠습니까?', 'button') %}
               {%endcall%}
               <div>
-                <button id="newbtn" class="btn btn-sm btn-primary px-3 float-right" stype="display:none" type="button" >새로 만들기</button>
+                <button id="newbtn" class="btn btn-sm btn-primary px-3 float-right" style="display:none" type="button" >새로 만들기</button>
               </div>
             </div>
           </div>
@@ -143,10 +143,12 @@ Handlebars.registerHelper('datefmt', function (dt) {
 }); 
 
 $('button#newbtn').click(function() {
+  $('#newchecklistarea').hide()
+  $('#checkarea').empty()
   $('button#newbtn').hide()
   $('#savebtn').show()
-  $('#checktitle').hide()
-  $('#checkarea').hide()
+  var titletxt = $('#newchecklist').val()
+  $('#checktitle').text(titletxt)
   $('#hideInput').show()
   $('input#newchecklist').val('')
   $('#afteradd').show()
