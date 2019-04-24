@@ -8,6 +8,9 @@ from sqlalchemy.sql import func
 from helloflask.Search import ElasticSearch
 from helloflask.forms import RegistrationForm, PostForm
 import difflib
+from helloflask.email import send_email, confirm_email
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+
 # import json
 
 @app.route('/')
@@ -21,8 +24,10 @@ def editajax(userid, id):
     posts = p.json()
     return jsonify(posts)
 
+
 @app.route('/write/edit/<userid>/<id>', methods=['GET', 'POST'])
 def edit(userid, id):
+
     userid=session['loginUser']['userid']
     title = request.form.get('title')
     print("title>>", title)
@@ -44,11 +49,6 @@ def edit(userid, id):
     return render_template('edit.htm', userid=userid, postid=id)
 
 
-
-
-
-
-
 @app.route('/memo/<userid>')
 def memo(userid):
     userid = session['loginUser']['userid']
@@ -58,7 +58,6 @@ def memo(userid):
         memolst.append(m.json())
     print("memolist>>>>>>>>>", memolst)
     return jsonify(memolst)
-
 
 
 @app.route('/checklist/<userid>')
@@ -88,10 +87,12 @@ def save(userid):
         j['status'] = 'fail'
     return jsonify(j)
 
+
 @app.route('/posting/detail/<userid>/postid=<postid>')
 def detailajax(userid, postid):
 
     return render_template('detailpost.htm', userid=userid, postid=postid)
+
 
 @app.route('/posting/<userid>/<postid>')
 def detail(userid, postid):
@@ -99,6 +100,7 @@ def detail(userid, postid):
     a = p.json()
     a['username'] = p.user.username
     return jsonify(a)
+
 
 @app.route('/posting/delete/<userid>/<postid>', methods=['DELETE'])
 def delpost(userid, postid):
@@ -112,6 +114,7 @@ def delpost(userid, postid):
         db_session.rollback()
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
+
 
 @app.route('/checklist/delete/<userid>/<id>', methods=['DELETE'])
 def delchecklist(userid, id):
@@ -127,6 +130,7 @@ def delchecklist(userid, id):
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
 
+
 @app.route('/memo/delete/<userid>/<id>', methods=['DELETE'])
 def delmemo(userid, id):
     dmemo = Memo.query.filter('user_id =:userid and id=:id').params(userid=userid, id=id).first()
@@ -139,6 +143,7 @@ def delmemo(userid, id):
         db_session.rollback()
         print("Failed to delete the memo", err)
         return ''
+
 
 @app.route('/posting/memo', methods=['POST'])
 def postmemo():
@@ -161,6 +166,7 @@ def postmemo():
         print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
     return jsonify(mJson)
 
+
 @app.route("/posting/write/checklist", methods=['POST'])
 def postchecklist():
     loadJson = request.json
@@ -174,6 +180,7 @@ def postchecklist():
     checkJson['lists'] = checkJson['checklist'].split(",")
     return jsonify(checkJson)
 
+
 @app.route('/posting/write/memolist', methods=['POST'])
 def postmemolist():
     loadJson = request.json
@@ -183,6 +190,7 @@ def postmemolist():
     memoJson = memo.json()
     memoJson['lists'] = memoJson['memo'].split(",")
     return jsonify(memoJson)
+
 
 @app.route('/posting/write', methods=['POST'])
 def postwrite():
@@ -269,6 +277,12 @@ def register_post():
         flash('Account created for {}'.format(register.username.data), 'success')
         u = User(register.password.data, register.email.data,  register.username.data)
         try:
+            s = URLSafeTimedSerializer('The_Key') # QQQ secret key 바꾸기
+    
+            token = s.dumps(register.email.data, salt = 'email_confirm')
+            confirm_email(token)
+            link = url_for('confirm_email', token = token, _external = True)
+            send_email(subject, link, register.email.data)
             db_session.add(u)
             db_session.commit()
             print("data inserted")
@@ -278,6 +292,7 @@ def register_post():
         return redirect('/login')
 
     return render_template('register.htm', title='Register Page', register = register)
+
 
 # @app.route('/tags')
 # def tags():
@@ -294,6 +309,7 @@ def logout():
     if session.get('loginUser'):
         del session['loginUser']
     return redirect(session['next'])
+
 
 @app.route('/login', methods=['GET'])
 def login():
@@ -316,6 +332,7 @@ def loginpost():
     else:
         errorjson = { 'status' : 'error'}
         return jsonify(errorjson)
+
 
 @app.route('/compare')
 def compare():
