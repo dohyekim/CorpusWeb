@@ -2,13 +2,14 @@
 {%block main%}
 <div class="row mt-5">
     <div class="container">
+        <form method="GET" action="/write/edit/{{userid}}/{{postid}}">
         <div id="postdetail" class="mt-5 card-body">
             <script id="detail-template-{{userid}}" type="text/x-handlebars-template">
                 {% raw %}
                     <div class="row">
         
                         <div class="col-lg-9 h5 "><strong>{{title}}</strong></div>
-                        <div class="col-lg-3 float-right">{{date_posted}}</div>
+                        <div class="col-lg-3 float-right">{{datefmt date_posted}}</div>
                         
                     </div>
                     <div class="row">
@@ -18,10 +19,16 @@
                         </div>
                     </div>
                     <hr>
-                    <p>{{content}}</p>
+                    <div class="float-right">
+                        <button id="revisionBtn" type="submit" class="btn btn-primary">수정하기</button>
+                    </div>
+                    <div name="content">
+                        <p>{{content}}</p>
+                    </div>
                 {% endraw %}
             </script>
         </div>
+    </form>
     </div>    
 </div>
 <script>
@@ -39,5 +46,10 @@ var data = {};
         console.log("Error!!", res)
     })
 )
+
+$('#revisionBtn').click( function() {
+    
+})
 </script>
+
 {%endblock main%}

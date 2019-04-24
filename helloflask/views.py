@@ -15,6 +15,40 @@ def main():
     session['next'] = request.url
     return render_template('main.htm', title="Main")
 
+@app.route('/write/revision/<userid>/<id>', methods=['GET'])
+def editajax(userid, id):
+    p = Post.query.options(subqueryload(Post.user)).filter('user_id=:userid and postid=:id').params(userid=userid, id=id).first()
+    posts = p.json()
+    return jsonify(posts)
+
+@app.route('/write/edit/<userid>/<id>', methods=['GET', 'POST'])
+def edit(userid, id):
+    userid=session['loginUser']['userid']
+    title = request.form.get('title')
+    print("title>>", title)
+    content = request.form.get('content')
+    print("content>>", content)
+    post = Post(title, content, userid)
+    post.postid = id
+
+    try:
+        db_session.merge(post)
+        db_session.commit()
+        print("Update Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        return redirect('/posting')
+
+    except Exception as err:
+        db_session.rollback()
+        print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
+
+    return render_template('edit.htm', userid=userid, postid=id)
+
+
+
+
+
+
+
 @app.route('/memo/<userid>')
 def memo(userid):
     userid = session['loginUser']['userid']
@@ -25,6 +59,8 @@ def memo(userid):
     print("memolist>>>>>>>>>", memolst)
     return jsonify(memolst)
 
+
+
 @app.route('/checklist/<userid>')
 def checklist(userid):
     userid = session['loginUser']['userid']
@@ -34,7 +70,6 @@ def checklist(userid):
         checklst.append(c.json())
     print("memolist>>>>>>>>>", checklst)    
     return jsonify(checklst)
-
 
 
 @app.route('/posting/save/<userid>', methods=['POST'])
@@ -104,8 +139,7 @@ def delmemo(userid, id):
         db_session.rollback()
         print("Failed to delete the memo", err)
         return ''
-################# delete 라우터 만들고 (memo)
-############## memo/checklist 페이지 만들기
+
 @app.route('/posting/memo', methods=['POST'])
 def postmemo():
     mJson = {}
@@ -193,13 +227,12 @@ def lists(userid):
         return redirect('/login')
     else:
         userid = session['loginUser']['userid']
-        posts = Post.query.options(subqueryload(Post.user)).filter('user_id = :userid').params(userid=userid).all()
+        posts = Post.query.order_by(Post.postid.desc()).options(subqueryload(Post.user)).filter('user_id = :userid').params(userid=userid).all()
         lsts = []
         for post in posts:
             l = post.json()
             l['username'] = post.user.username
             lsts.append(l)
-        print(lsts)
         return jsonify(lsts)
 # [s.json() for s in cmts]
 

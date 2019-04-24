@@ -90,7 +90,14 @@
                 }).fail(function (res) {
                     console.log("Error!", res)
                 })
-            }
+        }
+
+        Handlebars.registerHelper('datefmt', function (dt) {
+            var m = moment(dt);
+            var output = m.format("YYYY MMMM Do, a h:mm");
+            return output; 
+        }); 
+
         
 
     </script>

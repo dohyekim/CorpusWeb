@@ -2,12 +2,12 @@
 {%from "macro/modalmacro.htm" import modalmcr%}
 {%block main%}
 <div class="container">
-    <form method="POST" action="/posting/write">
+    <form method="POST" action="/write/edit/{{userid}}/{{postid}}">
     <div class="row col-lg-12 content-section mt-5 ml-4">
         <div class="md-form col-lg-12 mt-5">
             <i class="fas fa-user prefix"></i> 
             <input type="text" id="inputIconEx2" name = "title" class="form-control">
-            <label for="inputIconEx2">&nbsp;&nbsp;&nbsp;&nbsp;Title</label>
+            <label id= "title" for="inputIconEx2">&nbsp;&nbsp;&nbsp;&nbsp;Title</label>
         </div>
         <div class="container">
             <!-- Card -->
@@ -108,7 +108,7 @@
         <div class="container ml-4">
             <div class="row ml-5">
                 <div class="form-group text-right">
-                    <button class="btn btn-info" type="submit">POST</button>
+                    <button class="btn btn-info" type="submit">수정하기</button>
                 </div>
             </div>
         </div>
@@ -211,8 +211,24 @@ function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
     })
 });
 }
+var title;
+var content;
 $(document).ready(function () {
-    hbs('name-template', '', 'namelist')
+    $.ajax({
+        url: '/write/revision/{{userid}}/{{postid}}',
+        type: 'GET'
+    }).done(function (res) {
+        title = res.title
+        content = res.content
+        console.log("title>>>>", title)
+        console.log("content>>>>", content)
+        $('#title').text(title)
+        $('textarea#content').text(content)
+
+    }).fail(function (res) {
+        console.log("Error!!", res)
+    });
+    hbs('name-template', '', 'namelist');
 });
 
 

@@ -136,6 +136,12 @@
 
 <script>
 
+Handlebars.registerHelper('datefmt', function (dt) {
+  var m = moment(dt);
+  var output = m.format("YYYY MMMM Do, a h:mm");
+  return output; 
+}); 
+
 $('button#newbtn').click(function() {
   $('button#newbtn').hide()
   $('#savebtn').show()
@@ -228,11 +234,7 @@ $('#save').click( function() {
 
 
 
-Handlebars.registerHelper('datefmt', function (dt) {
-  var m = moment(dt);
-  var output = m.format("YYYY MMMM Do, a h:mm");
-  return output; 
-  }); 
+
 var data = {}
 var len = null;
 var dataTemplate = null;

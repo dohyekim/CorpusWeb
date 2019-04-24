@@ -27,10 +27,22 @@ insert into Post(title, content, user_id) values('글1', '이것은 글입니다
 insert into Post(title, content, user_id) values('글2', '이것은 글2입니다', 1);
 insert into Post(postid,title, content, user_id) values(3,'글3', '이것은 글2입니다', 1);
 
+drop table Checklist;
 create table Checklist (
 	id int unsigned auto_increment primary key,
     user_id int unsigned not null,
-    checklist varchar(256)
+    name varchar(256),
+    checklist text
+);
+drop table Memo;
+create table Memo(
+	id int unsigned auto_increment primary key,
+    user_id int unsigned not null,
+    title varchar(256) not null,
+    memo text not null
 );
 
+select * from Memo;
 select * from Checklist;
+SELECT * from Post;
+desc Post;
