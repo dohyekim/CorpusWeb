@@ -1,25 +1,27 @@
 import smtplib
 
 
-def send_email(subject, msg, to):
+def send_email(to, subject, msg):
     try:
         server = smtplib.SMTP('smtp.gmail.com:587')
         server.ehlo()
         server.starttls()
-        server.login(from_address,pwd)
-        server.sendmail(from_address, to ,msg)
+        pwd = 'zfvliqmiwsmhieuj'
+        pwd.encode('utf-8')
+        email = 'logforyou.kjm@gmail.com'
+        email.encode('utf-8')
+        server.login(email, pwd)
+        message = 'Subject: {}\n\n{}'.format(subject, msg)
+        message.encode('utf-8')
+        server.sendmail(email, to, message)
         server.quit()
-        print("Success: Email sent!")
-    except:
-        print("Email failed to send.")
 
+    except Exception as err:
+        print("Email failed to send.", err)
 
-
-
-
-def confirm_email(token):
-    try:
-        email = s.loads(token, salt= 'email_confirm', max_age = 100)
-    except SignatureExpired:
-        return '<h1>유효기간이 만료되었습니다. 다시 가입해주세요. </h1>'
-    return redirect('/login')
+# def confirm_email(token):
+#     try:
+#         email = s.loads(token, salt= 'email_confirm', max_age = 100)
+#     except SignatureExpired:
+#         return '<h1>유효기간이 만료되었습니다. 다시 가입해주세요. </h1>'
+#     return redirect('/login')

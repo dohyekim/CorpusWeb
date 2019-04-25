@@ -197,18 +197,16 @@ function setYellow() {
 }
 
 var savedata = {};
-var savedt = []
 $('#save').click( function() {
+  var savedt = []
   var l = $('input.checknew').next('label').length;
   if (l == 0) {
     alert("체크리스트를 먼저 만들어주세요!")
     closeModal('saveModal')
     return
   } 
-  for (var i = 1; i <= l; i++) {
-    savedt.push($('#newlabel' + String(i)).text())
-  };
-    savedata['checklist'] = savedt.join(', ');
+
+    savedata['checklist'] = $('#checkarea').text().trim().split("     ")
     savedata['name'] = $('#newchecklistarea').text().trim();
   $.ajax({
     url : '/posting/save/{{userid}}',

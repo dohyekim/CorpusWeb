@@ -2,11 +2,11 @@
 {%from "macro/modalmacro.htm" import modalmcr%}
 {%block main%}
 <div class="container">
-    <form method="POST" action="/posting/write">
+    <form method="POST" action="{{action}}">
     <div class="row col-lg-12 content-section mt-5 ml-4">
         <div class="md-form col-lg-12 mt-5">
             <i class="fas fa-user prefix"></i> 
-            <input type="text" id="inputIconEx2" name = "title" class="form-control">
+            <input type="text" id="title" name = "title" class="form-control">
             <label for="inputIconEx2">&nbsp;&nbsp;&nbsp;&nbsp;Title</label>
         </div>
         <div class="container">
@@ -107,9 +107,15 @@
         </div>
         <div class="container ml-4">
             <div class="row ml-5">
-                <div class="form-group text-right">
-                    <button id="postBtn" class="btn btn-info" type="submit">POST</button>
-                </div>
+                {% if mode == "revision" %}
+                    <div class="form-group text-right">
+                        <button id="postBtn" class="btn btn-info" type="submit">수정하기</button>
+                    </div>
+                {% else %}
+                    <div class="form-group text-right">
+                        <button id="postBtn" class="btn btn-info" type="submit">POST</button>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -176,41 +182,58 @@ function send_ajax(url, data, method, dataType, fn) {
     console.log("request complete")
     });
 }
+
 function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
     var loadJson = {};
     $('#' + btnId).click(function() {
-        $('#' + delbtnId).show()
-        var chck = $('#' + listId + ' option:selected').text();
-        loadJson['name'] = chck;
-        $.ajax({
-            url : url,
-            data : JSON.stringify(loadJson),
-            type : 'POST',
-            contentType:"application/json",
-            dataType: 'json'
-        }).done( function (res) {
-            console.log("REs>>>>>", res)
-            if (resultId === 'check-result') {
-                    console.log("id>>>>>>>>>>>>> ", res['id'])
-                    console.log('/checklist/delete/{{userid}}' + checkId)
-                    checkId = res['id'];
-                    delList('delcheckBtn','/checklist/delete/{{userid}}/', checkId, 'check-result')
-                }
-                else {
-                    memoId = res['id'];
-                    console.log('/memo/delete/{{userid}}/' + memoId)
-                    delList('delmemoBtn','/memo/delete/{{userid}}/', memoId, 'memo-result')
-                }
-            hbs(templateId, {'loadData':res}, resultId)
-            $('#memo-result div.custom-control.custom-checkbox').html($('#memo-result div.custom-control.custom-checkbox').text().trim().replace(/\n/g, '<br>'));
-            
-            closeModal(modalId)
-        }).fail( function(res) {
-            console.log("Error!", res)
-        })
+    $('#' + delbtnId).show()
+    
+    var chck = $('#' + listId + ' option:selected').text();
+    loadJson['name'] = chck;
+    $.ajax({
+        url : url,
+        data : JSON.stringify(loadJson),
+        type : 'POST',
+        contentType:"application/json",
+        dataType: 'json'
+    }).done( function (res) {
+        console.log("REs>>>>>", res)
+        if (resultId === 'check-result') {
+                console.log("id>>>>>>>>>>>>> ", res['id'])
+                console.log('/checklist/delete/{{userid}}' + checkId)
+                checkId = res['id'];
+                delList('delcheckBtn','/checklist/delete/{{userid}}/', checkId, 'check-result')
+            }
+            else {
+                memoId = res['id'];
+                console.log('/memo/delete/{{userid}}/' + memoId)
+                delList('delmemoBtn','/memo/delete/{{userid}}/', memoId, 'memo-result')
+            }
+
+        hbs(templateId, {'loadData':res}, resultId)
+        closeModal(modalId)
+    }).fail( function(res) {
+        console.log("Error!", res)
+    })
 });
 }
+var title;
+var content;
 $(document).ready(function () {
+    $.ajax({
+        url: '/write/revision/{{userid}}/{{postid}}',
+        type: 'GET'
+    }).done(function (res) {
+        title = res.title
+        content = res.content
+        console.log("title>>>>", title)
+        console.log("content>>>>", content)
+        $('#title').text(title)
+        $('textarea#content').text(content)
+
+    }).fail(function (res) {
+        console.log("Error!!", res)
+    });
     hbs('name-template', '', 'namelist');
 });
 
@@ -233,6 +256,9 @@ function loadCheckData(buttonId, url, resultId) {
         })
     })
 }
+
+
+
 
 $('#postBtn').click( function() {
     if ($('#inputIconEx2').val() == false) {

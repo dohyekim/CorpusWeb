@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from helloflask.Search import ElasticSearch
 from helloflask.forms import RegistrationForm, PostForm
 import difflib
-from helloflask.email import send_email, confirm_email
+from helloflask.email import send_email
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 # import json
@@ -17,6 +17,12 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 def main():
     session['next'] = request.url
     return render_template('main.htm', title="Main")
+
+
+@app.route('/note')
+def note():
+    return render_template('note.htm', title="Notes")
+
 
 @app.route('/write/revision/<userid>/<id>', methods=['GET'])
 def editajax(userid, id):
@@ -46,7 +52,7 @@ def edit(userid, id):
         db_session.rollback()
         print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
 
-    return render_template('edit.htm', userid=userid, postid=id)
+    return render_template('writelayout.htm', userid=userid, postid=id, action="/write/edit/{}/{}".format(userid, id), mode="revision")
 
 
 @app.route('/memo/<userid>')
@@ -76,14 +82,16 @@ def save(userid):
     j={}
     savelst = request.json
     print("sssssssssssssssssssssssssssssssssssssssssss> ", savelst['checklist'], len(savelst['checklist']))
+    savelst['checklist'] = ",".join(savelst['checklist'])
     c = Checklist(userid, savelst['name'], savelst['checklist'])
     try:
         db_session.add(c)
         db_session.commit()
         print("checklist data inserted")
         j['status'] = 'success'
-    except:
+    except Exception as err:
         db_session.rollback()
+        print("Error?>>>>>>>", err)
         j['status'] = 'fail'
     return jsonify(j)
 
@@ -269,6 +277,20 @@ def posting():
         userid = session['loginUser']['userid']
     return render_template('posting.htm', userid = userid)
 
+@app.route('/register/doublecheck', methods=['POST'])
+def doublecheck():
+    signdata = request.json
+    username = signdata['username']
+    email = signdata['email']
+    us = User.query.filter('username = :username').params(username=username).first()
+    ue = User.query.filter('email = :email').params(email = email).first()
+    if us != None:
+        return jsonify({'status':'username duplicate', 'isChecked': 'False'})
+    if ue != None:
+        return jsonify({'status':'email duplicate', 'isChecked': 'False'})
+    else:
+        return jsonify({'status': 'success', 'isChecked': 'False'})
+    
 
 @app.route('/register', methods=['GET','POST'])
 def register_post():
@@ -277,17 +299,19 @@ def register_post():
         flash('Account created for {}'.format(register.username.data), 'success')
         u = User(register.password.data, register.email.data,  register.username.data)
         try:
-            s = URLSafeTimedSerializer('The_Key') # QQQ secret key 바꾸기
-    
-            token = s.dumps(register.email.data, salt = 'email_confirm')
-            confirm_email(token)
-            link = url_for('confirm_email', token = token, _external = True)
-            send_email(subject, link, register.email.data)
+            subject = "회원가입 메일"
+            mail = "회원가입을 축하합니다"
+            # s = URLSafeTimedSerializer('The_Key') # QQQ secret key 바꾸기
+            # token = s.dumps(register.email.data, salt = 'email_confirm')
+            # confirm_email(token)
+            # link = url_for('confirm_email', token = token, _external = True)
+            send_email(subject, mail ,register.email.data)
             db_session.add(u)
             db_session.commit()
             print("data inserted")
-        except:
+        except Exception as err:
             db_session.rollback()
+            print("ROLL BACK FOR REGISTER", err)
 
         return redirect('/login')
 

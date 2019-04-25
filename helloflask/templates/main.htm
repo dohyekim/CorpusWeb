@@ -171,14 +171,14 @@
           <div class="md-form" id="newmemo">
             <h4 class="card-title"> 
             </h4>
-              <!--Basic textarea-->
-              <div class="md-form pink-textarea active-pink-textarea-2">
-                <textarea id="memo-title" class="md-textarea form-control" rows="1"></textarea>
-                <label for="memo-title">메모 이름</label>
-              </div>
-            <button onclick="newmemo()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
-              <i class="fas fa-plus" aria-hidden="true"></i>
-            </button>
+            <!--Basic textarea-->
+            <div id="memoTitleArea" class="md-form pink-textarea active-pink-textarea-2">
+              <textarea id="memo-title" class="md-textarea form-control" rows="1"></textarea>
+              <label for="memo-title">메모 이름</label>
+              <button onclick="newmemo()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
           <!-- Material input -->
           <div id="removed-memo" class="form-group pink-border-focus">
@@ -196,6 +196,9 @@
           {% call modalmcr('default float-right', 'memobtn','memo', '저장하기', 'memoModal', '저장하시겠습니까?', 'button' ) %}
           {% endcall %}
         </div>
+        <div>
+          <button id="addMemoBtn" class="btn btn-sm btn-primary px-3 float-right" style="display:none" type="button" >새로 만들기</button>
+        </div>
       </div>
     </div>
   </div>
@@ -204,9 +207,20 @@
 
 
 <script>
+$('#addMemoBtn').click( function() {
+  $('#memo-title').val('')
+  $('#memo-content').val('')
+  $('#addMemoBtn').css('display:none')
+  $('#memobtn').show()
+  $('#memoTitleArea').show()
+  $('#removed-memo').show()
+  $('#newmemo h4.card-title').text('')
+  $('#memoarea').text('')
+
+})
 
 $('#newmemobtn').click( function() {
-  var memoContent = $('#memo-content').val();
+  var memoContent = $('#memo-content').val().replace(/\n/g,'<br>');
   var memoTitle = $('#memo-title').val();
   if (memoTitle == false) {
     alert("먼저 메모 이름을 입력해주세요!")
@@ -217,8 +231,8 @@ $('#newmemobtn').click( function() {
     alert('내용을 입력해주세요!')
     return
   }
-  $('#removed-memo').remove()
-  $('#memoarea').text(memoContent)
+  $('#removed-memo').hide()
+  $('#memoarea').html(memoContent)
 })
 
 function newmemo() {
@@ -227,11 +241,10 @@ function newmemo() {
     alert('제목을 입력해주세요!')
     return
   }
-  $('#newmemo').text(memoTitle)
+  $('#newmemo h4.card-title').text(memoTitle)
+  $('#memoTitleArea').hide()
 };
 
-var savedata = {};
-var savedt = []
 
 $('#memobtn').click( function() {
   if ($('#memoarea').text() == false) {
@@ -242,17 +255,18 @@ $('#memobtn').click( function() {
 })
 // memoarea
 $('#memo').click( function() {
-  var memoTitle = $('#newmemo').text();
-  var memoContent = $('#memoarea').text();
+  var savedata = {};
+  var memoTitle = $('h4.card-title').text();
+  var memoContent = $('#memoarea').text()
   if (memoContent == false){
     alert("메모를 작성해주세요")
     closeModal('memoModal')
     return
   }
   else if (memoContent != false) {
-    savedt.push($(memoContent))
     savedata['title'] = memoTitle;
-    savedata['memo'] = memoContent; 
+    savedata['memo'] = $('#memoarea').html().replace(/<br>/g,'\n');
+
   }
   $.ajax({
     url : '/posting/memo',
@@ -267,6 +281,8 @@ $('#memo').click( function() {
       else {
         alert('저장 성공!')
         $('#memobtn').css('display', 'none')
+        $('#addMemoBtn').css('display', 'block')
+
       }
       closeModal('memoModal')
     }).fail( function(res) {
