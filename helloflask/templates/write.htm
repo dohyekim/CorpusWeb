@@ -6,8 +6,8 @@
     <div class="row col-lg-12 content-section mt-5 ml-4">
         <div class="md-form col-lg-12 mt-5">
             <i class="fas fa-user prefix"></i> 
-            <input type="text" id="inputIconEx2" name = "title" class="form-control">
-            <label for="inputIconEx2">&nbsp;&nbsp;&nbsp;&nbsp;Title</label>
+            <input type="text" id="title" name = "title" class="form-control">
+            <label for="title">&nbsp;&nbsp;&nbsp;&nbsp;Title</label>
         </div>
         <div class="container">
             <!-- Card -->
@@ -235,7 +235,7 @@ function loadCheckData(buttonId, url, resultId) {
 }
 
 $('#postBtn').click( function() {
-    if ($('#inputIconEx2').val() == false) {
+    if ($('#title').val() == false) {
         alert("제목을 반드시 입력해주세요!")
         return false
     }

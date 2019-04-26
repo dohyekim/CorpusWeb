@@ -97,18 +97,13 @@ document.addEventListener('keydown', function(event) {
 $('document').ready( function() {
     $('#submit').css('display', 'none');
 });
+    // urls, type, data, fn
 
 $('#dupCheck').click( function() {
     var signdata = {}
     signdata['username'] = $('#username').val()
     signdata['email'] = $('#email').val()
-    $.ajax({
-        url : '/register/doublecheck',
-        type:'POST',
-        data : JSON.stringify(signdata),
-        contentType:"application/json",
-        dataType: 'json'
-    }).done( function(res) {
+    sendAjax('/register/doublecheck', 'POST', signdata, function(res) {
         console.log("res>>", res)
         if (res.status == 'username duplicate') {
             alert('이미 같은 이름의 사용자가 있습니다! 다른 이름을 사용해주세요')
@@ -125,11 +120,9 @@ $('#dupCheck').click( function() {
             res.isCheck = 'True'
             $('#submit').css('display', 'block')
             $('#dupCheck').css('display', 'none')
-            return
+            return    
         }
-        }).fail( function(res) {
-            console.log("Error!", res)
-        })
+    })
 })
 
 

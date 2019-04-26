@@ -7,7 +7,7 @@
         <div class="md-form col-lg-12 mt-5">
             <i class="fas fa-user prefix"></i> 
             <input type="text" id="title" name = "title" class="form-control">
-            <label for="inputIconEx2">&nbsp;&nbsp;&nbsp;&nbsp;Title</label>
+            <label id="titleLabel" for="title">&nbsp;&nbsp;&nbsp;&nbsp;Title</label>
         </div>
         <div class="container">
             <!-- Card -->
@@ -36,7 +36,7 @@
                     <!-- Title -->
                     <!-- Default unchecked -->
                     {{# each loadData.lists}}
-                    <div class="custom-control custom-checkbox">
+                    <div name="data" class="custom-control">
                         {{this}}
                     </div>
                     {{/each}}
@@ -121,17 +121,40 @@
     </div>
     </form>
 </div>
-</div>
 
 
 <script>
 
 var checkId;
 var memoId;
+var chcktemplate;
+var nametemplate;
+var loadtemplate;
+
+loadCheckData('loadChcklist', '/checklist/{{userid}}', 'namelist')
+loadCheckData('loadMemo', '/memo/{{userid}}', 'memolist')
 
 loadList('load', 'delcheckBtn', 'namelist', '/posting/write/checklist', 'check-template', 'check-result', 'loadModal')
 loadList('mload', 'delmemoBtn', 'memolist', '/posting/write/memolist', 'memo-template', 'memo-result', 'mloadModal')
 
+$('#postBtn').click( function() {
+    if ($('#title').val() == false) {
+        alert("제목을 반드시 입력해주세요!")
+        return false
+    }
+})
+
+$(document).ready(function () {
+    getAjax('/write/revision/{{userid}}/{{postid}}', 'GET', function(res) {
+        title = res.title
+        content = res.content
+        console.log("title>>>>", title)
+        console.log("content>>>>", content)
+        $('#title').val(title)
+        $('textarea#content').text(content)        
+    })
+    hbs('name-template', '', 'namelist');
+});
 
 function delList(btnId, url, deldata, result) {
     $('#' + btnId).click( function() {
@@ -143,9 +166,6 @@ function delList(btnId, url, deldata, result) {
     })
 }
 
-var chcktemplate;
-var nametemplate;
-var loadtemplate;
 function hbs(sourceId, data, resultId) {
     var source = document.getElementById(sourceId).innerHTML;
     var template = Handlebars.compile(source);
@@ -162,26 +182,10 @@ function hbs(sourceId, data, resultId) {
     }
     render(template, data, resultId)
   } 
+
 function render(template, data, resultId) {
   document.getElementById(resultId).innerHTML = template(data);
   } 
-
-function send_ajax(url, data, method, dataType, fn) {
-    $.ajax({
-    url : url,
-    data : data, 
-    type : method,
-    dataType: dataType
-    }).done(function (res) {
-    console.log("res>>>", res)
-    if (fn)
-        fn(res)
-    }).fail(function (xhr, status, errorThrown) {
-    console.error("Error!", xhr, status, errorThrown)
-    }).always(function (xhr, status) {
-    console.log("request complete")
-    });
-}
 
 function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
     var loadJson = {};
@@ -190,13 +194,7 @@ function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
     
     var chck = $('#' + listId + ' option:selected').text();
     loadJson['name'] = chck;
-    $.ajax({
-        url : url,
-        data : JSON.stringify(loadJson),
-        type : 'POST',
-        contentType:"application/json",
-        dataType: 'json'
-    }).done( function (res) {
+    sendAjax(url, 'POST', loadJson, function(res) {
         console.log("REs>>>>>", res)
         if (resultId === 'check-result') {
                 console.log("id>>>>>>>>>>>>> ", res['id'])
@@ -209,63 +207,22 @@ function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
                 console.log('/memo/delete/{{userid}}/' + memoId)
                 delList('delmemoBtn','/memo/delete/{{userid}}/', memoId, 'memo-result')
             }
-
         hbs(templateId, {'loadData':res}, resultId)
+        $('div[name]').html($('div[name]').text().trim().replace(/\n/g, '<br>'))
         closeModal(modalId)
-    }).fail( function(res) {
-        console.log("Error!", res)
     })
 });
 }
-var title;
-var content;
-$(document).ready(function () {
-    $.ajax({
-        url: '/write/revision/{{userid}}/{{postid}}',
-        type: 'GET'
-    }).done(function (res) {
-        title = res.title
-        content = res.content
-        console.log("title>>>>", title)
-        console.log("content>>>>", content)
-        $('#title').text(title)
-        $('textarea#content').text(content)
 
-    }).fail(function (res) {
-        console.log("Error!!", res)
-    });
-    hbs('name-template', '', 'namelist');
-});
-
-
-
-loadCheckData('loadChcklist', '/checklist/{{userid}}', 'namelist')
-loadCheckData('loadMemo', '/memo/{{userid}}', 'memolist')
 function loadCheckData(buttonId, url, resultId) {
     $('#' + buttonId).click( function () {
-        $.ajax({
-            url : url,
-            type : 'GET'
-        }).done(function (res) {
+        getAjax(url, 'GET', function(res) {
             console.log("res>>>>>>", res)
-
             render(nametemplate, {'data':res}, resultId)
-
-        }).fail(function(res) {
-            console.log("Error!!! ", res)
-        })
+        })        
     })
 }
 
-
-
-
-$('#postBtn').click( function() {
-    if ($('#inputIconEx2').val() == false) {
-        alert("제목을 반드시 입력해주세요!")
-        return false
-    }
-})
 </script>
 
 {%endblock main%}

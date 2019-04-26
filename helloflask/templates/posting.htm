@@ -126,7 +126,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> 
     </div>
     </section>
   </div>
@@ -174,7 +174,7 @@ $('#newcheckbtn').click( function() {
   }
   var txt = $('#newcheck').val();
   $('#newcheck').val('');
-  var htmls = '<div class="custom-control custom-checkbox" id="checkboxarea' + String(ids) + '"> \
+  var htmls = '<div class="custom-control custom-checkbox" name="checklist" id="checkboxarea' + String(ids) + '"> \
   <input type="checkbox" class="custom-control-input checknew" id="checknew' + String(ids) + '"' + '>\
   <label class="custom-control-label checknew" id="newlabel' + String(ids) + '"' + '\
   for="checknew' + String(ids) + '"></label></div>';
@@ -208,13 +208,8 @@ $('#save').click( function() {
 
     savedata['checklist'] = $('#checkarea').text().trim().split("     ")
     savedata['name'] = $('#newchecklistarea').text().trim();
-  $.ajax({
-    url : '/posting/save/{{userid}}',
-    data : JSON.stringify(savedata),
-    type : 'POST',
-    contentType:"application/json",
-    dataType: 'json'
-    }).done( function(res) {
+
+    sendAjax('/posting/save/{{userid}}', 'POST', savedata, function(res) {
       if (res['status'] === 'fail') {
         alert('저장에 실패했습니다! 다시 시도해주세요')
       }
@@ -223,12 +218,10 @@ $('#save').click( function() {
         $('#newbtn').css('display', 'block')
         $('#afteradd').hide()
         $('#savebtn').hide()
-
       }
       closeModal('saveModal')
-    }).fail( function(res) {
-      console.log("Error!!", res)
-    })
+    })  
+
 })
 
 
@@ -252,19 +245,15 @@ function render(template, data, resultId) {
   document.getElementById(resultId).innerHTML = template(data);
   } 
 
-$(document).ready(
-  $.ajax({
-    url : '/posting/lists/{{userid}}',
-    type : 'GET' 
-  }).done(function(res) {
+$(document).ready( function() {
+  getAjax('/posting/lists/{{userid}}', 'GET', function(res) {
     len = res.length;
     data = res;
     console.log("Data>>>>>>", data)
-    hbs("table-template-{{userid}}", {data:data}, 'postingbody-{{userid}}')
-  }).fail(function(res) {
-    console.log("Error!!", res)
+    hbs("table-template-{{userid}}", {data:data}, 'postingbody-{{userid}}')    
   })
-)
+})
+
 
 
 var htmls = {};
@@ -299,14 +288,9 @@ function comparetwo() {
       a = a + 1;
       }
     }
-  $.ajax({
-    url:'/posting/compare',
-    data : JSON.stringify(htmls), 
-    type : 'POST',
-    contentType:"application/json",
-    dataType: 'json'
-    }).done(function (res) {
-      var h = res['HTML'];
+    //urls, type, data, fn)
+  sendAjax('/posting/compare', 'POST', htmls, function(res) {
+    var h = res['HTML'];
       $('#compare-content').html(h);
       $('td.diff_next').remove() 
       $('table:nth-child(2) tbody tr:nth-child(2) td:nth-child(2) table').remove()
@@ -320,10 +304,8 @@ function comparetwo() {
       $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table').removeAttr('border')
       $('table[id]').attr('align','center')
       $('table[summary]').attr('align','right')
-    }).fail(function(res) {
-      console.log("ERRR>>>>>>", res)
-    })
-  }
+  })
+}
 
 $('#delbtn').click( function() {
   if ($('input:checkbox[name="delcheckbox"]:checked').length == 0) {

@@ -52,7 +52,7 @@ def edit(userid, id):
         db_session.rollback()
         print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
 
-    return render_template('writelayout.htm', userid=userid, postid=id, action="/write/edit/{}/{}".format(userid, id), mode="revision")
+    return render_template('writelayout.htm', title="Revise", userid=userid, postid=id, action="/write/edit/{}/{}".format(userid, id), mode="revision")
 
 
 @app.route('/memo/<userid>')
@@ -99,7 +99,7 @@ def save(userid):
 @app.route('/posting/detail/<userid>/postid=<postid>')
 def detailajax(userid, postid):
 
-    return render_template('detailpost.htm', userid=userid, postid=postid)
+    return render_template('detailpost.htm', title="Your Post",userid=userid, postid=postid)
 
 
 @app.route('/posting/<userid>/<postid>')
@@ -230,7 +230,7 @@ def getwrite():
     if session.get('loginUser'):
         userid = session['loginUser']['userid']
 
-        return render_template('write.htm', title="New Post", userid=userid)
+        return render_template('writelayout.htm', title="New Post", userid=userid)
 
     else:
         session['next'] = request.url
@@ -275,7 +275,7 @@ def posting():
         return redirect('/login')
     else:
         userid = session['loginUser']['userid']
-    return render_template('posting.htm', userid = userid)
+    return render_template('posting.htm', title="Posts", userid = userid)
 
 @app.route('/register/doublecheck', methods=['POST'])
 def doublecheck():
@@ -337,7 +337,7 @@ def logout():
 
 @app.route('/login', methods=['GET'])
 def login():
-    return render_template('login.htm')
+    return render_template('login.htm', title="Login")
 
 
 @app.route('/login', methods=['POST'])
@@ -361,7 +361,7 @@ def loginpost():
 @app.route('/compare')
 def compare():
     session['next'] = request.url
-    return render_template('compare.htm')
+    return render_template('compare.htm', title="Compare")
 
 
 # def wc():

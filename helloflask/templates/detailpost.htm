@@ -33,21 +33,16 @@
 </div>
 <script>
 var data = {};
-    $(document).ready(
-    $.ajax({
-        url : '/posting/{{userid}}/{{postid}}',
-        type : 'GET' 
-    }).done(function(res) {
+$(document).ready( function() {
+    getAjax('/posting/{{userid}}/{{postid}}', 'GET', function(res) {
         var source = document.getElementById('detail-template-{{userid}}').innerHTML;
         var template = Handlebars.compile(source);
         var html = template(res);
         document.getElementById('postdetail').innerHTML = html;
         var c = $('#content')
-        c.html(c.text().trim().replace(/\n/g, '<br>'))
-    }).fail(function(res) {
-        console.log("Error!!", res)
+        c.html(c.text().trim().replace(/\n/g, '<br>'))            
     })
-)
+})
 
 
 </script>

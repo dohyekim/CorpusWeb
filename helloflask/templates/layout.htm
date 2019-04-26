@@ -79,6 +79,35 @@
         function closeModal(modalId) {
             $('#' + modalId).modal('hide');
         }
+        
+        function sendAjax(urls, type, data, fn) {
+            $.ajax({
+                url:urls,
+                type:type,
+                data : JSON.stringify(data),
+                contentType:"application/json",
+                dataType: 'json'
+                }).done(function(res){
+                    if (fn) {
+                        fn(res) }
+                }).fail(function (res) {
+                    console.log("Error!", res)
+                })
+            }
+       
+        function getAjax(url, type, fn) {
+            $.ajax({
+                url: url,
+                type: type
+                }).done(function(res) {
+                    if (fn) {
+                        fn(res)
+                    }
+                }).fail(function(res) {
+                    console.log("Error!!", res)
+                })
+            }
+
         function delAjax(urls, fn) {
             $.ajax({
                 url:urls,

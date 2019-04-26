@@ -266,16 +266,10 @@ $('#memo').click( function() {
   else if (memoContent != false) {
     savedata['title'] = memoTitle;
     savedata['memo'] = $('#memoarea').html().replace(/<br>/g,'\n');
+  } 
 
-  }
-  $.ajax({
-    url : '/posting/memo',
-    data : JSON.stringify(savedata),
-    type : 'POST',
-    contentType:"application/json",
-    dataType: 'json'
-  }).done( function(res) {
-      if (res['status'] === 'fail') {
+  sendAjax('/posting/memo', 'POST', savedata, function(res) {
+    if (res['status'] === 'fail') {
         alert('저장에 실패했습니다! 다시 시도해주세요')
       }
       else {
@@ -284,153 +278,90 @@ $('#memo').click( function() {
         $('#addMemoBtn').css('display', 'block')
 
       }
-      closeModal('memoModal')
-    }).fail( function(res) {
-      console.log("Error!!", res)
-    })
+      closeModal('memoModal')    
+  })
+
 })
 
 
 
-    Handlebars.registerHelper('escp', function(data) {
-      return data.replace(/"/g, "'");
-    });
-    
-    var currentData = null;
+Handlebars.registerHelper('escp', function(data) {
+  return data.replace(/"/g, "'");
+});
 
-    function showTags(tid, cue, lang) {
-      var d = currentData.find( function(t) { return t.cue == cue && t.tid == tid && t.lang == lang});
-      d.isShowTags = true;
-      // console.log(lang)
-      // {data: currentData}가 표준, {currentData}도 가능하지만 표준을 사용하는 게 좋다.
-      if (lang == 'Korean') {
-        render(dataTemplate, {data:currentData}, 'korresult')
-      }
-      else {
-        render(dtTemplate, {data:currentData}, 'engresult')
-      }
+var currentData = null;
+
+function showTags(tid, cue, lang) {
+  var d = currentData.find( function(t) { return t.cue == cue && t.tid == tid && t.lang == lang});
+  d.isShowTags = true;
+  // console.log(lang)
+  // {data: currentData}가 표준, {currentData}도 가능하지만 표준을 사용하는 게 좋다.
+  if (lang == 'Korean') {
+    render(dataTemplate, {data:currentData}, 'korresult')
+  }
+  else {
+    render(dtTemplate, {data:currentData}, 'engresult')
+  }
+}
+    
+var dataTemplate = null;
+function hbs(sourceId, data, resultId) {
+  var source = document.getElementById(sourceId).innerHTML;
+  var template = Handlebars.compile(source);
+  if (resultId === 'korresult'){
+      // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
+      dataTemplate = template;
+      render(template, data, resultId)
     }
-    
-    /*
-    $('a#tags').click(function () {
-      $('a#tags').hide()
-      $.ajax({
-        url:'/tags', 
-        type:'GET',
-        error : function(res) {
-          console.log("Error!!")
-        }, 
-        success: function(res) {
-          console.log("got json");
-          // var ts = JSON.parse(res);
-          console.log("res>>>", res)
-          var tags = res['tags']
-          console.log(typeof(tags))
-          var splittags = tags.split(',')
-          console.log(typeof(splittags), splittags)
-          for (var i = 0; i < splittags.length; i++){
-            // 매번 선언
-            var span;
-            var span = $('<span>')
-              span.attr("id", "tag" + (i+1))
-              var tag = splittags[i] 
-              span.addClass("badge").addClass("badge-pill").addClass("badge-default")
-              span.text(tag).appendTo('p.card-text')
-            }
-        }
-      });
-    });
-    */
-    
-    
-    var dataTemplate = null;
-    function hbs(sourceId, data, resultId) {
-      var source = document.getElementById(sourceId).innerHTML;
-      var template = Handlebars.compile(source);
-      if (resultId === 'korresult'){
-          // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
-          dataTemplate = template;
-          render(template, data, resultId)
-        }
-        else {
-          dtTemplate = template;
-          render(template, data, resultId)
-        }
-        
-      }
-    function render(template, data, resultId) {
-      document.getElementById(resultId).innerHTML = template(data);
-      }
-      
-    //  var d = currentData.find( function(t) { return t.cue == cue && t.tid == tid && t.lang == lang});
-    //  d.isShowTags = true;
-      function showMore(data, id) {
-        var btn = $('button#' + id);
-        var spn = $('span.' + id);
-        btn.hide()
-        spn.text(data);
-      }
-
-
-    // foreRes 
-
-    $('#korsearch').click( function() {
-      var s = $('#ksearchwords').val()
-      if (!s) {
-        alert("다시 입력하세요!")
-      }
-      else {
-        $.ajax({
-          url: '/korsearch/' + s,
-          type: 'GET'
-        }).done(function(data) {
-          console.log("data>>>>>", data)
-          console.log("length>>>", data.length)
-          currentData = data;
-          // data:currentData
-          hbs("entry-template", {data:currentData}, 'korresult')
-        }).fail(function(res) {
-            console.log("Error!!", res)
-        })
-      }
-    })
-
-    $('#engsearch').click( function() {
-      var s = $('#esearchwords').val()
-      if (!s) {
-        alert("다시 입력하세요!")
-      }
-      else {
-        $.ajax({
-          url: '/engsearch/' + s,
-          type: 'GET'
-        }).done(function(data) {
-          console.log("data>>>>>", data)
-          console.log("length>>>", data.length)
-          currentData = data;
-          hbs("entry-template", {data:currentData}, 'engresult')
-        }).fail(function(res) {
-            console.log("Error!!", res)
-        })
-      }
-    })
-    
-    function send_ajax(url, data, method, dataType, fn) {
-      $.ajax({
-        url : url,
-        data : data, 
-        type : method,
-        dataType: dataType
-      }).done(function (res) {
-        console.log("res>>>", res)
-        if (fn)
-          fn(res)
-      }).fail(function (xhr, status, errorThrown) {
-        console.error("Error!", xhr, status, errorThrown)
-      }).always(function (xhr, status) {
-        console.log("request complete")
-      });
+  else {
+    dtTemplate = template;
+    render(template, data, resultId)
     }
+}
+
+function render(template, data, resultId) {
+  document.getElementById(resultId).innerHTML = template(data);
+  }
   
+function showMore(data, id) {
+  var btn = $('button#' + id);
+  var spn = $('span.' + id);
+  btn.hide()
+  spn.text(data);
+}
+
+
+$('#korsearch').click( function() {
+  var s = $('#ksearchwords').val()
+  if (!s) {
+    alert("다시 입력하세요!")
+  }
+  else {
+    getAjax('/korsearch/' + s, 'GET', function(data) {
+      console.log("data>>>>>", data)
+      console.log("length>>>", data.length)
+      currentData = data;
+      // data:currentData
+      hbs("entry-template", {data:currentData}, 'korresult')    
+    })
+  }
+})
+
+$('#engsearch').click( function() {
+  var s = $('#esearchwords').val()
+  if (!s) {
+    alert("다시 입력하세요!")
+  }
+  else {
+    getAjax('/engsearch/' + s, 'GET', function(data) {
+    console.log("data>>>>>", data)
+    console.log("length>>>", data.length)
+    currentData = data;
+    hbs("entry-template", {data:currentData}, 'engresult')
+    })
+  }
+})
+    
+
   </script>
 {%endblock main%}
