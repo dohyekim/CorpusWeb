@@ -6,7 +6,7 @@
           <div class="container">
     
             <!-- Brand -->
-            <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">
+            <a class="navbar-brand waves-effect" href="/">
               <strong class="blue-text">Home</strong>
             </a>
     
@@ -21,9 +21,8 @@
     
               <!-- Left -->
               <ul class="navbar-nav mr-auto">
-                <li class="nav-item {% if (request.path == '/') %} active {% endif %}">
-                  <a class="nav-link waves-effect" href="/">Corpus
-                    <span class="sr-only">(current)</span>
+                <li class="nav-item {% if (request.path == '/corpus') %} active {% endif %}">
+                  <a class="nav-link waves-effect" href="/corpus">Corpus
                   </a>
                 </li>
                 <!--                 <li class="nav-item {% if (request.path == '/') %}active{% endif %}"> -->
@@ -33,8 +32,8 @@
                 <li class="nav-item {% if (request.path == '/posting') %} active {% endif %}">
                   <a class="nav-link waves-effect" href="/posting">Portfolio</a>
                 </li>
-                <li class="nav-item {% if (request.path == '/note') %} active {% endif %}">
-                  <a class="nav-link waves-effect" href="/note">Notes</a>
+                <li class="nav-item {% if (request.path == '/notes') %} active {% endif %}">
+                  <a class="nav-link waves-effect" href="/notes">Notes</a>
                 </li>
               </ul>
     

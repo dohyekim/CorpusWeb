@@ -13,15 +13,25 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 # import json
 
-@app.route('/')
-def main():
+@app.route("/notes")
+def notes():
+    if session.get('loginUser'):
+        userid = session['loginUser']['userid']
+        return render_template('notes.htm', title="Notes", userid=userid)
+
+    else:
+        session['next'] = request.url
+        return redirect('/login')
+
+@app.route('/corpus')
+def corpus():
     session['next'] = request.url
-    return render_template('main.htm', title="Main")
+    return render_template('corpus.htm', title="Corpus")
 
 
-@app.route('/note')
+@app.route('/')
 def note():
-    return render_template('note.htm', title="Notes")
+    return render_template('main.htm', title="Main")
 
 
 @app.route('/write/revision/<userid>/<id>', methods=['GET'])
@@ -64,16 +74,21 @@ def memo(userid):
         memolst.append(m.json())
     print("memolist>>>>>>>>>", memolst)
     return jsonify(memolst)
-
+@app.route('/test')
+def test():
+    return render_template('test2.htm')
 
 @app.route('/checklist/<userid>')
 def checklist(userid):
     userid = session['loginUser']['userid']
     check = Checklist.query.options(subqueryload(Checklist.user)).filter('user_id = :userid').params(userid=userid).all()
+    # checklst = check.json()
+    # print(checklst, "ccccc")
     checklst = []
     for c in check:
-        checklst.append(c.json())
-    print("memolist>>>>>>>>>", checklst)    
+        a = c.json()
+        a['checklist'] = a['checklist'].split(",")
+        checklst.append(a)
     return jsonify(checklst)
 
 
@@ -104,9 +119,10 @@ def detailajax(userid, postid):
 
 @app.route('/posting/<userid>/<postid>')
 def detail(userid, postid):
-    p = Post.query.options(subqueryload(Post.user)).filter('postid = :postid and user_id = :userid').params(postid=postid, userid=userid).first()
-    a = p.json()
-    a['username'] = p.user.username
+    ps = Post.query.options(subqueryload(Post.user)).filter('postid = :postid and user_id = :userid').params(postid=postid, userid=userid).first()
+    print(ps)
+    a = ps.json()
+    a['username'] = ps.user.username
     return jsonify(a)
 
 

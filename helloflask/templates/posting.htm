@@ -21,7 +21,7 @@
             {% raw %}
               {{#each data}}  
                 <tr id="{{postid}}">
-                  <td>{{@index}}</td>
+                  <td>{{numbering @index}}</td>
                   <td>{{username}}</td>
                   <td><a href="/posting/detail/{{user_id}}/postid={{postid}}">{{title}}</a></td>
                   <td>{{datefmt date_posted}}</td>
@@ -142,6 +142,10 @@ Handlebars.registerHelper('datefmt', function (dt) {
   return output; 
 }); 
 
+Handlebars.registerHelper('numbering', function(num) {
+  return num + 1
+})
+
 $('button#newbtn').click(function() {
   $('#newchecklistarea').hide()
   $('#checkarea').empty()
@@ -177,14 +181,22 @@ $('#newcheckbtn').click( function() {
   var htmls = '<div class="custom-control custom-checkbox" name="checklist" id="checkboxarea' + String(ids) + '"> \
   <input type="checkbox" class="custom-control-input checknew" id="checknew' + String(ids) + '"' + '>\
   <label class="custom-control-label checknew" id="newlabel' + String(ids) + '"' + '\
-  for="checknew' + String(ids) + '"></label></div>';
+  for="checknew' + String(ids) + '"> </label> <span class="badge badge-danger float-right"><i class="fas fa-times" aria-hidden="true"></i></span> </div>';
   $(htmls).appendTo('#checkarea')
   $('#newlabel' + String(ids)).text(txt);
   ids = ids + 1;
+  delList();
   $('input.checknew').change( function() {
     setYellow();
   })
 });
+
+function delList() {
+  $("div[name] span").click( function() {
+    $(this).closest("div").remove()
+  })
+}
+
 
 function setYellow() {
   $('input.checknew').each(function () {
@@ -218,6 +230,7 @@ $('#save').click( function() {
         $('#newbtn').css('display', 'block')
         $('#afteradd').hide()
         $('#savebtn').hide()
+        $('div[name] button').hide()
       }
       closeModal('saveModal')
     })  

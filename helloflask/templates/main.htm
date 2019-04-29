@@ -1,367 +1,101 @@
 {%extends 'layout.htm'%}
-{%from "macro/modalmacro.htm" import modalmcr%}
 {%block main%}
-<!--Main layout-->
-<main class="mt-5 pt-5">
 
-  <div class="container">
+<div class="container mt-5 pt-5">
+    
+    <!-- Card deck -->
+<div class="mt-5 card-deck text-center">
 
-    <!--Section: Jumbotron-->
-    <section class="card wow fadeIn" style="background-image: url(https://mdbootstrap.com/img/Photos/Others/gradient1.jpg);">
-      <!-- Content -->
-      <div class="card-body text-white text-center py-5 px-5 my-5">
-
-        <h1 class="mb-4">
-          <strong>Not sure about your words? <br> 
-            Check out at MyCorpus !</strong>
-        </h1>
-        <p>
-          <strong>Real-World English from TED.com</strong>
-        </p>
-
+        <!-- Card -->
+        <div class="card mb-4">
+      
+          <!--Card image-->
+          <div class="view overlay">
+            <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/16.jpg" alt="Card image cap">
+            <a href="javascript:void()">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+      
+          <!--Card content-->
+          <div class="card-body d-flex flex-column">
+      
+            <!--Title-->
+            <h4 class="card-title">Corpus</h4>
+            <!--Text-->
+            <p class="card-text mb-auto">
+              Real-world English from TED.com <br>
+              Check out if your words & phrases & sentences are used in TED Talks <br>
+              You can also check various fields that those words are used in.<br>
+              Jot down something while checking your words!  
+            </p>
+            <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+            <a href="/corpus"><button type="button" class="btn btn-primary btn-md">Go to Corpus</button>
+            </a>
+          </div>
+      
+        </div>
+        <!-- Card -->
+      
+        <!-- Card -->
+        <div class="card mb-4">
+      
+          <!--Card image-->
+          <div class="view overlay">
+            <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/14.jpg" alt="Card image cap">
+            <a href="javascript:void()">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+      
+          <!--Card content-->
+          <div class="card-body d-flex flex-column">
+      
+            <!--Title-->
+            <h4 class="card-title">Compare</h4>
+            <!--Text-->
+            <p class="card-text mb-auto">Compare two words or phrases to decide which fits best for your essays.<br>
+            It also tells you frequency of use.</p>
+            <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+            <a href="/compare">
+              <button type="button" class="btn btn-md btn-primary waves-effect waves-light align-items-end justify-content-end">Go to Compare</button>
+            </a>
+          </div>
+      
+        </div>
+        <!-- Card -->
+      
+        <!-- Card -->
+        <div class="card mb-4">
+      
+          <!--Card image-->
+          <div class="view overlay">
+            <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/15.jpg" alt="Card image cap">
+            <a href="javascript:void()">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+      
+          <!--Card content-->
+          <div class="card-body d-flex flex-column">
+      
+            <!--Title-->
+            <h4 class="card-title">Portfolio</h4>
+            <!--Text-->
+            <p class="card-text mb-auto">Post your essays from first draft to final draft. <br>
+            After revising your draft, you can compare it with previous draft.<br>
+            Don't forget to check your checklist and memo while writing your essay!</p>
+            <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+            <a href="/posting"><button type="button" class="btn btn-primary btn-md">Go to Porforlio</button>
+            </a>
+          </div>
+      
+        </div>
+        <!-- Card -->
+      
       </div>
-      <!-- Content -->
-    </section>
-
-    <!--Section: Jumbotron-->
-
-    <hr class="my-5">
-    <!-- 한/영 영/한-->
-    <div class="row">
-      <div class="col-9 text-center">
-        <ul class="nav nav-pills mb-3" id="pills-koreng-tab" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" id="pills-koreng-tab" data-toggle="pill" href="#pills-home" role="tab"
-              aria-controls="pills-home" aria-selected="true">한/영</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="pills-engkor-tab" data-toggle="pill" href="#pills-profile" role="tab"
-              aria-controls="pills-profile" aria-selected="false">영/한</a>
-          </li>
-        </ul>
-        <div class="tab-content" id="pills-tabContent">
-          <!-- 한영 -->
-          <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-            <div class="md-form form-inline">
-            <!-- <form class="form-inline mb-4"> -->
-              <input id="ksearchwords" name="ksearchwords" type="text" value="감사합니다" class="w-75" placeholder='입력하세요.' aria-describedby="MaterialButton-addon2">
-              <button id="korsearch" class="btn btn-md btn-secondary ml-4 m-0 px-3" type="button" >Search</button>
-            <!-- </form> -->
-            </div>
-            <!-- 한/영 검색 결과 -->
-            <div class="container text-center">
-              <div class="row">
-                <div class="text-center">
-                  <div id="korresult">
-                  </div>
-                </div>  
-              </div>
-            </div>
-          </div>
-
-          <!-- 영한 -->
-          <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-            <div class="md-form form-inline">
-              <input id="esearchwords" name="esearchwords" type="text" value="want to" class="w-75" placeholder='Write words or phrases' aria-describedby="MaterialButton-addon2">
-              <button id="engsearch" class="btn btn-md btn-secondary ml-4 m-0 px-3 " type="button">Search</button>
-            </div>
-            <!-- 영/한 검색 결과 -->
-            <div class="container text-center">
-                <div class="row">
-                  <div class="text-center">
-                    <div id="engresult">
-                    </div>
-                  </div>  
-                </div>
-              </div>
-          </div>
-        </div>
-
-        {% raw %}
-        <script id="entry-template" type="text/x-handlebars-template">
-          <ol type="1">
-              {{#each data}}
-            <div>
-              <li>
-                <div class="row">
-                  <div class="col-8 text-left">
-                    <span class="foresentence{{@index}}">
-                      <button class="smbt btn-sm btn btn-link px-0 py-0" id="foresentence{{@index}}" onclick='showMore("{{escp foresentence}}", "foresentence{{@index}}")'>...</button>
-                    </span>
-                    {{#if korsentences}}
-                    {{korsentences}}
-
-                    {{else}}
-                    {{engsentences}}
-                    {{/if}}
-                    <span class="lastsentence{{@index}}">
-                      <button class="smbt btn-sm btn btn-link px-0 py-0" id="lastsentence{{@index}}" onclick='showMore("{{escp lastsentence}}", "lastsentence{{@index}}")'>...</button>
-                    </span>
-                    <br> 
-                      <span class="foreresult{{@index}}">
-                        <button class="smbt btn-sm btn btn-link px-0 py-0" id="foreresult{{@index}}" onclick='showMore("{{escp foreresult}}", "foreresult{{@index}}")'>...</button>
-                      </span>
-                    {{result}}
-                      <span class="lastresult{{@index}}">
-                        <button class="smbt btn-sm btn btn-link px-0 py-0" id="lastresult{{@index}}" onclick='showMore("{{escp lastresult}}", "lastresult{{@index}}")'>...</button>
-                      </span>
-                  </div>
-
-                  <div class="col-4"> 
-                    <!-- Card -->
-                    <div class="card">
-                      <!-- Card content -->
-                      <div class="card-body">
-                  
-                        <!-- Title -->
-                        <div class="form-inline">
-                          <h6 class="card-title">Tags</h6> <br>
-                          
-                          <!-- Text -->
-                          <p class="card-text">
-                            {{#each tags}}
-                              <span id="tag{{@index}}" class="badge badge-pill badge-default">{{this}}</span>
-                            {{/each}}
-                          </p>
-                        </div>
-                      </div>
-                      
-                    </div>
-                    <!-- Card -->
-                  </div>
-                </div>
-                <br>
-              </li>
-            </div>
-            {{/each}}
-          </ol>
-        </script>
-        {% endraw %}
-
-          <!--Pagination-->
-        <nav class="d-flex justify-content-center wow fadeIn">
-          <ul class="pagination pg-blue">
-
-            <!--Arrow left-->
-            <li class="page-item disabled">
-              <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-              </a>
-            </li>
-
-            <li class="page-item active">
-              <a class="page-link" href="#">현재</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <!--Pagination-->
-      <!-- Card -->
-      <div class="col-3 card">
-          <!-- Card content -->
-        <div class="card-body">
-          <!-- Title -->
-          <div class="md-form" id="newmemo">
-            <h4 class="card-title"> 
-            </h4>
-            <!--Basic textarea-->
-            <div id="memoTitleArea" class="md-form pink-textarea active-pink-textarea-2">
-              <textarea id="memo-title" class="md-textarea form-control" rows="1"></textarea>
-              <label for="memo-title">메모 이름</label>
-              <button onclick="newmemo()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
-                <i class="fas fa-plus" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-          <!-- Material input -->
-          <div id="removed-memo" class="form-group pink-border-focus">
-            <label for="memo-content"></label>
-            <textarea class="form-control" id="memo-content" rows="3"></textarea>
-            <button type="button" id="newmemobtn" class="btn btn-sm btn-default px-3 text-right">
-              <i class="fas fa-plus" aria-hidden="true"></i>
-            </button>
-          </div>
-          <div id="memoarea">
-          </div>
-        </div>
-        
-        <div class="container">
-          {% call modalmcr('default float-right', 'memobtn','memo', '저장하기', 'memoModal', '저장하시겠습니까?', 'button' ) %}
-          {% endcall %}
-        </div>
-        <div>
-          <button id="addMemoBtn" class="btn btn-sm btn-primary px-3 float-right" style="display:none" type="button" >새로 만들기</button>
-        </div>
-      </div>
+      <!-- Card deck -->
     </div>
-  </div>
-</main>
-<!--Main layout-->  
 
-
-<script>
-$('#addMemoBtn').click( function() {
-  $('#memo-title').val('')
-  $('#memo-content').val('')
-  $('#addMemoBtn').css('display:none')
-  $('#memobtn').show()
-  $('#memoTitleArea').show()
-  $('#removed-memo').show()
-  $('#newmemo h4.card-title').text('')
-  $('#memoarea').text('')
-
-})
-
-$('#newmemobtn').click( function() {
-  var memoContent = $('#memo-content').val().replace(/\n/g,'<br>');
-  var memoTitle = $('#memo-title').val();
-  if (memoTitle == false) {
-    alert("먼저 메모 이름을 입력해주세요!")
-    $('#memo-title').focus()
-    return
-  }
-  else if (memoContent == false) {
-    alert('내용을 입력해주세요!')
-    return
-  }
-  $('#removed-memo').hide()
-  $('#memoarea').html(memoContent)
-})
-
-function newmemo() {
-  var memoTitle = $('#memo-title').val();
-  if (memoTitle == false) {
-    alert('제목을 입력해주세요!')
-    return
-  }
-  $('#newmemo h4.card-title').text(memoTitle)
-  $('#memoTitleArea').hide()
-};
-
-
-$('#memobtn').click( function() {
-  if ($('#memoarea').text() == false) {
-    alert("메모를 먼저 작성해주세요")
-    $('#memobtn').removeAttr('data-target')
-    return
-  }
-})
-// memoarea
-$('#memo').click( function() {
-  var savedata = {};
-  var memoTitle = $('h4.card-title').text();
-  var memoContent = $('#memoarea').text()
-  if (memoContent == false){
-    alert("메모를 작성해주세요")
-    closeModal('memoModal')
-    return
-  }
-  else if (memoContent != false) {
-    savedata['title'] = memoTitle;
-    savedata['memo'] = $('#memoarea').html().replace(/<br>/g,'\n');
-  } 
-
-  sendAjax('/posting/memo', 'POST', savedata, function(res) {
-    if (res['status'] === 'fail') {
-        alert('저장에 실패했습니다! 다시 시도해주세요')
-      }
-      else {
-        alert('저장 성공!')
-        $('#memobtn').css('display', 'none')
-        $('#addMemoBtn').css('display', 'block')
-
-      }
-      closeModal('memoModal')    
-  })
-
-})
-
-
-
-Handlebars.registerHelper('escp', function(data) {
-  return data.replace(/"/g, "'");
-});
-
-var currentData = null;
-
-function showTags(tid, cue, lang) {
-  var d = currentData.find( function(t) { return t.cue == cue && t.tid == tid && t.lang == lang});
-  d.isShowTags = true;
-  // console.log(lang)
-  // {data: currentData}가 표준, {currentData}도 가능하지만 표준을 사용하는 게 좋다.
-  if (lang == 'Korean') {
-    render(dataTemplate, {data:currentData}, 'korresult')
-  }
-  else {
-    render(dtTemplate, {data:currentData}, 'engresult')
-  }
-}
-    
-var dataTemplate = null;
-function hbs(sourceId, data, resultId) {
-  var source = document.getElementById(sourceId).innerHTML;
-  var template = Handlebars.compile(source);
-  if (resultId === 'korresult'){
-      // dataTemplate에 template( compile을 한 번만 하기 위해서 (다시 compile하지 말라는 뜻))
-      dataTemplate = template;
-      render(template, data, resultId)
-    }
-  else {
-    dtTemplate = template;
-    render(template, data, resultId)
-    }
-}
-
-function render(template, data, resultId) {
-  document.getElementById(resultId).innerHTML = template(data);
-  }
-  
-function showMore(data, id) {
-  var btn = $('button#' + id);
-  var spn = $('span.' + id);
-  btn.hide()
-  spn.text(data);
-}
-
-
-$('#korsearch').click( function() {
-  var s = $('#ksearchwords').val()
-  if (!s) {
-    alert("다시 입력하세요!")
-  }
-  else {
-    getAjax('/korsearch/' + s, 'GET', function(data) {
-      console.log("data>>>>>", data)
-      console.log("length>>>", data.length)
-      currentData = data;
-      // data:currentData
-      hbs("entry-template", {data:currentData}, 'korresult')    
-    })
-  }
-})
-
-$('#engsearch').click( function() {
-  var s = $('#esearchwords').val()
-  if (!s) {
-    alert("다시 입력하세요!")
-  }
-  else {
-    getAjax('/engsearch/' + s, 'GET', function(data) {
-    console.log("data>>>>>", data)
-    console.log("length>>>", data.length)
-    currentData = data;
-    hbs("entry-template", {data:currentData}, 'engresult')
-    })
-  }
-})
-    
-
-  </script>
 {%endblock main%}
+

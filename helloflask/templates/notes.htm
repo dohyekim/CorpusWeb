@@ -1,0 +1,76 @@
+{%extends 'layout.htm'%}
+{%block main%}
+
+<div class="container mt-5 pt-5">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="memo-tab" data-toggle="tab" href="#memo" role="tab" aria-controls="memo"
+                aria-selected="true">Memo</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="checklist-tab" data-toggle="tab" href="#checklist" role="tab" aria-controls="checklist"
+                aria-selected="false">Checklist</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="memo" role="tabpanel" aria-labelledby="memo-tab">
+
+            </div>
+            <div class="tab-pane fade" id="checklist" role="tabpanel" aria-labelledby="checklist-tab">
+                <div class="mt-5">
+                    <div id="hbsChecklist"></div>
+                    <script id="note-template" type="text/x-handlebars-template">
+                        {% raw %}
+                        <div class="row">
+                        {{# each data}}
+                        <div class="col-lg-3 col-md-4 d-flex align-items-stretch mb-5">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-2">{{name}}</h5>
+                                    {{#each checklist}}
+                                    <div id="check{{@index}}" class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="load{{@index}}">
+                                        <label class="custom-control-label" for="load{{@index}}">{{this}}</label>
+                                    </div>
+                                    {{/each}}
+                                    <div class="row">
+                                    <a href="#!" class="card-link col">수정하기</a>
+                                    <a href="#!" class="card-link col">삭제하기</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                        </div>
+                        {% endraw %}
+                    </script>
+                </div>
+            </div>
+</div>
+
+<script>
+$(document).ready(function () {
+    getAjax('/checklist/{{userid}}', 'GET', function(res) {
+    console.log("Res>>>>>", res)
+    hbs('note-template', {'data':res}, 'hbsChecklist')
+    });
+});
+
+function hbs(sourceId, data, resultId) {
+    var source = document.getElementById(sourceId).innerHTML;
+    var template = Handlebars.compile(source);
+    if(resultId === 'hbsMemolist' | resultId === 'hbsChecklist')  {
+        nametemplate = template;
+        render(nametemplate, data, resultId)
+    }
+    else {
+        render(template, data, resultId)
+    }
+  } 
+
+function render(template, data, resultId) {
+  document.getElementById(resultId).innerHTML = template(data);
+  } 
+
+</script>
+{%endblock main%}
