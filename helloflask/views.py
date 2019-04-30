@@ -71,9 +71,12 @@ def memo(userid):
     memo = Memo.query.options(subqueryload(Memo.user)).filter('user_id = :userid').params(userid=userid).all()
     memolst = []
     for m in memo:
-        memolst.append(m.json())
-    print("memolist>>>>>>>>>", memolst)
+        mJson = m.json()
+        memolst.append(mJson)
+    print("memolist>>>>>>>", memolst)
     return jsonify(memolst)
+
+
 @app.route('/test')
 def test():
     return render_template('test2.htm')
@@ -87,7 +90,7 @@ def checklist(userid):
     checklst = []
     for c in check:
         a = c.json()
-        a['checklist'] = a['checklist'].split(",")
+        a['content'] = a['content'].split(",")
         checklst.append(a)
     return jsonify(checklst)
 
@@ -176,7 +179,7 @@ def postmemo():
     print("\n\n\n\n\n\n", memoJson)
     userid = session['loginUser']['userid']
     title = memoJson['title']
-    memo = memoJson['memo']
+    memo = memoJson['content']
     m = Memo(userid, title, memo)
     try:
         db_session.add(m)
@@ -201,7 +204,7 @@ def postchecklist():
     check = Checklist.query.options(subqueryload(Checklist.user)).filter('user_id = :userid and name = :name').params(userid=userid, name=name).first()
     # print("ccccccccccccccccccC>", type(check))
     checkJson = check.json()
-    checkJson['lists'] = checkJson['checklist'].split(",")
+    checkJson['lists'] = checkJson['content'].split(",")
     return jsonify(checkJson)
 
 
@@ -212,7 +215,7 @@ def postmemolist():
     name = loadJson['name']
     memo = Memo.query.options(subqueryload(Memo.user)).filter('user_id = :userid and name = :name').params(userid=userid, name=name).first()
     memoJson = memo.json()
-    memoJson['lists'] = memoJson['memo'].split(",")
+    memoJson['lists'] = memoJson['content'].split(",")
     return jsonify(memoJson)
 
 

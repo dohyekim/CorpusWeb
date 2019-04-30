@@ -14,12 +14,39 @@
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="memo" role="tabpanel" aria-labelledby="memo-tab">
-
+                <div class="mt-5">
+                    <div id="hbsMemolist"></div>
+                    <script id="memoNote-template" type="text/x-handlebars-template">
+                        {% raw %}
+                        <div class="row">
+                        {{# each data}}
+                        <div class="col-lg-3 col-md-4 d-flex mb-5">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-2">{{name}}</h5>
+                                    <div id="memo{{@index}}" class="custom-control">
+                                        {{rescp content}}
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                    <div class="row">
+                                        <a id="edit{{id}}" name="edit" href="#!" class="card-link col">수정하기</a>
+                                        <a id="del{{id}}"href="#!" class="card-link col">삭제하기</a>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                        </div>
+                        {% endraw %}
+                    </script>
+                </div>
             </div>
+
             <div class="tab-pane fade" id="checklist" role="tabpanel" aria-labelledby="checklist-tab">
                 <div class="mt-5">
                     <div id="hbsChecklist"></div>
-                    <script id="note-template" type="text/x-handlebars-template">
+                    <script id="checkNote-template" type="text/x-handlebars-template">
                         {% raw %}
                         <div class="row">
                         {{# each data}}
@@ -27,7 +54,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title mb-2">{{name}}</h5>
-                                    {{#each checklist}}
+                                    {{#each content}}
                                     <div id="check{{@index}}" class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" id="load{{@index}}">
                                         <label class="custom-control-label" for="load{{@index}}">{{this}}</label>
@@ -51,24 +78,36 @@
 </div>
 
 <script>
-$(document).ready(function () {
-    getAjax('/checklist/{{userid}}', 'GET', function(res) {
-    console.log("Res>>>>>", res)
-    hbs('note-template', {'data':res}, 'hbsChecklist')
-    });
+
+Handlebars.registerHelper('rescp', function(data) {
+    return new Handlebars.SafeString(this.content.replace(/\n/g, "<br>"))
 });
+
+
+function delList() {
+    var ids = $("div.row a[name]").attr("id")
+}
+
+$(document).ready(function () {
+    getAjax('/memo/{{userid}}', 'GET', function(res) {
+        console.log("Memo>>", res)
+    hbs('memoNote-template', {'data':res}, 'hbsMemolist')
+    console.log("ids>>>", ids)
+    })
+});
+
+$('#checklist-tab').click( function() {
+    getAjax('/checklist/{{userid}}', 'GET', function(res) {
+        console.log("Res>>>>>", res)
+        hbs('checkNote-template', {'data':res}, 'hbsChecklist')
+    });
+})
 
 function hbs(sourceId, data, resultId) {
     var source = document.getElementById(sourceId).innerHTML;
     var template = Handlebars.compile(source);
-    if(resultId === 'hbsMemolist' | resultId === 'hbsChecklist')  {
-        nametemplate = template;
-        render(nametemplate, data, resultId)
-    }
-    else {
-        render(template, data, resultId)
-    }
-  } 
+    render(template, data, resultId)
+    } 
 
 function render(template, data, resultId) {
   document.getElementById(resultId).innerHTML = template(data);

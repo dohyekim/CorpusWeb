@@ -42,7 +42,18 @@ create table Memo(
     memo text not null
 );
 
-select * from Memo;
-select * from Checklist;
+select * from Memo order by id desc;
+select * from Checklist order by id desc;
 SELECT * from Post;
 desc Post;
+desc User;
+select * from User;
+
+select talk_id from Talk;
+select * from TalkSpeaker order by talk_id desc;
+
+/*
+delete from User where username='aaaa';
+*/
+
+select * from Talk order by talk_id desc;

@@ -71,17 +71,17 @@ class Memo(Base):
     id = Column(Integer, primary_key = True)
     user_id = Column(Integer, ForeignKey('User.id'))
     name = Column(String)
-    memo = Column(String)
+    content = Column(String)
     user = relationship('User')
 
-    def __init__(self, user_id, name, memo):
+    def __init__(self, user_id, name, content):
         self.user_id = user_id
         self.name = name
-        self.memo = memo
+        self.content = content
 
     #tostring
     def __repr__(self):
-        return '%s, %s, %s, %s' %(self.user_id, self.memo, self.user, self.name)
+        return '%s, %s, %s, %s' %(self.user_id, self.content, self.user, self.name)
     
     def json (self) :
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -94,17 +94,17 @@ class Checklist(Base):
     id = Column(Integer, primary_key = True)
     user_id = Column(Integer, ForeignKey('User.id'))
     name = Column(String)
-    checklist = Column(String)
+    content = Column(String)
     user = relationship('User')
 
-    def __init__(self, user_id, name, checklist):
+    def __init__(self, user_id, name, content):
         self.user_id = user_id
         self.name = name
-        self.checklist = checklist
+        self.content = content
 
     #tostring
     def __repr__(self):
-        return '%s, %s, %s' %(self.user_id, self.name, self.checklist)
+        return '%s, %s, %s' %(self.user_id, self.name, self.content)
     
     def json (self) :
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}
