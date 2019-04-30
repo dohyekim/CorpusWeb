@@ -29,10 +29,29 @@ def corpus():
     return render_template('corpus.htm', title="Corpus")
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def note():
+    session['next'] = request.url
     return render_template('main.htm', title="Main")
 
+@app.route('/memo/edit/<userid>/<id>', methods=['GET', 'POST'])
+def editchecklist(userid, id):
+    res = request.json
+    userid = session['loginUser']['userid']
+    name = res['name']
+    content = res['content']
+    print("name>>", name, "content>>", content)
+    memo = Memo(userid, name, content)
+    memo.id = id
+    try:
+        db_session.merge(memo)
+        db_session.commit()
+        print("Update Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        return redirect('/notes')
+
+    except Exception as err:
+        db_session.rollback()
+        print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
 
 @app.route('/write/revision/<userid>/<id>', methods=['GET'])
 def editajax(userid, id):
@@ -141,7 +160,6 @@ def delpost(userid, postid):
         db_session.rollback()
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
-
 
 @app.route('/checklist/delete/<userid>/<id>', methods=['DELETE'])
 def delchecklist(userid, id):

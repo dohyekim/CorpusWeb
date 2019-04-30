@@ -32,21 +32,24 @@ create table Checklist (
 	id int unsigned auto_increment primary key,
     user_id int unsigned not null,
     name varchar(256),
-    checklist text
+    content text
 );
 drop table Memo;
 create table Memo(
 	id int unsigned auto_increment primary key,
     user_id int unsigned not null,
     title varchar(256) not null,
-    memo text not null
+    content text not null
 );
 
 select * from Memo order by id desc;
+select * from Memo where user_id=11;
 select * from Checklist order by id desc;
 SELECT * from Post;
 desc Post;
 desc User;
+desc Checklist;
+desc Memo;
 select * from User;
 
 select talk_id from Talk;

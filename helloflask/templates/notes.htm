@@ -1,4 +1,5 @@
 {%extends 'layout.htm'%}
+{%from "macro/nobtnmodal.htm" import noBtnModal%}
 {%block main%}
 
 <div class="container mt-5 pt-5">
@@ -20,26 +21,33 @@
                         {% raw %}
                         <div class="row">
                         {{# each data}}
-                        <div class="col-lg-3 col-md-4 d-flex mb-5">
+                        <div class="col-lg-3 col-md-4 col-sm-6 d-flex justify-content-around align-items-stretch mb-5">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-2">{{name}}</h5>
-                                    <div id="memo{{@index}}" class="custom-control">
-                                        {{rescp content}}
+                                    <h5 name='memoTitle' class="card-title mb-2 text-center" style="display:block">{{name}}</h5>
+                                    <textarea id="editMemoTitle" style="display:none">{{name}}</textarea>
+                                    <div class="container my-5">
+                                        <div id="memo{{@index}}" class="custom-control text-left">
+                                            <h6 name='memoContent' style="display:block">{{rescp content}}</h6>
+                                            <textarea id="editMemoContent" style="display:none" class="ml-0 pl-0">{{rescp content}}</textarea>
+                                        </div>
                                     </div>
                                     <div class="d-flex flex-column">
-                                    <div class="row">
-                                        <a id="edit{{id}}" name="edit" href="#!" class="card-link col">수정하기</a>
-                                        <a id="del{{id}}"href="#!" class="card-link col">삭제하기</a>
+                                    <div class="row" name="options">
+                                        <a id="edit{{id}}" name="edit" onclick="editList({{id}})" class="card-link col text-primary">수정하기</a>
+                                        <a id="del{{id}}" name="del" onclick="delList({{id}})" class="card-link col text-primary">삭제하기</a>
+                                        <a id="confirm{{id}}" name="confirm" onclick="confirmEdit({{id}})" class="card-link col text-primary" style="display:none">확인</a>
+
                                     </div>
-                                </div>
                                 </div>
                             </div>
                         </div>
-                        {{/each}}
-                        </div>
-                        {% endraw %}
-                    </script>
+                    </div>
+                    {{/each}}
+                </div>
+                {% endraw %}
+            </script>
+            {{noBtnModal('memoDel', '삭제하시겠습니까?', 'delapprove', 'button')}}
                 </div>
             </div>
 
@@ -83,17 +91,55 @@ Handlebars.registerHelper('rescp', function(data) {
     return new Handlebars.SafeString(this.content.replace(/\n/g, "<br>"))
 });
 
+function delList(id) {
+    openModal('memoDel')
+    console.log("userid>>{{userid}}")
+    $('#delapprove').click( function() {
+        delAjax('/memo/delete/{{userid}}/' + String(id), function(res) {
+            alert('삭제되었습니다')
+            closeModal('memoDel')
+            window.location.href = '/notes';
+            return
+        })
+    });
+}
 
-function delList() {
-    var ids = $("div.row a[name]").attr("id")
+function editList(id) {
+    var ids = String(id)
+    var divs = $("#edit" + ids).parents("div")[3]
+    $(divs).find("h5").css('display','none')
+    $(divs).find("h6").css('display','none')
+    $(divs).find("textarea").css('display','block')
+    $('#edit' + ids).hide()
+    $('#del' + ids).hide()
+    $('#confirm' + ids).css('display', 'block')
+
+}
+
+function confirmEdit(id) {
+    var divs = $("#edit" + String(id)).parents("div")[3]
+    console.log("dd")
+    var newMemo = {}
+    newMemo['name'] = $('#editMemoTitle').val()
+    console.log('name>>', newMemo['name'])
+    newMemo['content'] = $('#editMemoContent').val()
+    console.log('content>>', newMemo['content'])
+    // endAjax(urls, type, data, fn)
+    sendAjax('/memo/edit/{{userid}}/' + String(id), 'POST', newMemo, function(res) {
+        console.log(res)
+        $(divs).find("h5").text(newMemo['title'])
+        $(divs).find("h6").text(newMemo['content'])
+
+        return
+    })
+
 }
 
 $(document).ready(function () {
     getAjax('/memo/{{userid}}', 'GET', function(res) {
         console.log("Memo>>", res)
-    hbs('memoNote-template', {'data':res}, 'hbsMemolist')
-    console.log("ids>>>", ids)
-    })
+        hbs('memoNote-template', {'data':res}, 'hbsMemolist')
+    });
 });
 
 $('#checklist-tab').click( function() {
@@ -103,9 +149,13 @@ $('#checklist-tab').click( function() {
     });
 })
 
+var nametemplate;
 function hbs(sourceId, data, resultId) {
     var source = document.getElementById(sourceId).innerHTML;
     var template = Handlebars.compile(source);
+    if (resultId === 'hbsMemolist' | resultId === 'hbsChecklist') {
+        nametemplate=template;
+    }
     render(template, data, resultId)
     } 
 
