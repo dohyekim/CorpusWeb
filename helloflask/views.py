@@ -34,12 +34,32 @@ def note():
     session['next'] = request.url
     return render_template('main.htm', title="Main")
 
-@app.route('/memo/edit/<userid>/<id>', methods=['GET', 'POST'])
+@app.route('/checklist/edit/<userid>/<id>', methods=['GET', 'POST'])
 def editchecklist(userid, id):
-    res = request.json
+    req = request.json
     userid = session['loginUser']['userid']
-    name = res['name']
-    content = res['content']
+    name = req['name']
+    content = req['content']
+    print("name>>", name, "content>>", content)
+    check = Check(userid, name, content)
+    check.id = id
+    try:
+        db_session.merge(check)
+        db_session.commit()
+        print("Update Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        return jsonify({'status':'success'})
+
+    except Exception as err:
+        db_session.rollback()
+        print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
+        return jsonify({'status':'fail'})
+
+@app.route('/memo/edit/<userid>/<id>', methods=['GET', 'POST'])
+def editmemolist(userid, id):
+    req = request.json
+    userid = session['loginUser']['userid']
+    name = req['name']
+    content = req['content']
     print("name>>", name, "content>>", content)
     memo = Memo(userid, name, content)
     memo.id = id
