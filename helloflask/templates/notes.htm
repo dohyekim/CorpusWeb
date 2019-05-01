@@ -22,20 +22,20 @@
                         <div class="row">
                         {{# each data}}
                         <div class="col-lg-3 col-md-4 col-sm-6 d-flex justify-content-around align-items-stretch mb-5">
-                            <div class="card">
+                            <div id="memocard{{id}}" class="card">
                                 <div class="card-body">
                                     <h5 name='memoTitle' class="card-title mb-2 text-center" style="display:block">{{name}}</h5>
-                                    <textarea id="editMemoTitle" style="display:none">{{name}}</textarea>
+                                    <textarea id="editMemoTitle{{id}}" style="display:none">{{name}}</textarea>
                                     <div class="container my-5">
-                                        <div id="memo{{@index}}" class="custom-control text-left">
+                                        <div id="memo{{id}}" class="custom-control text-left">
                                             <h6 name='memoContent' style="display:block">{{rescp content}}</h6>
-                                            <textarea id="editMemoContent" style="display:none" class="ml-0 pl-0">{{rescp content}}</textarea>
+                                            <textarea id="editMemoContent{{id}}" style="display:none" class="ml-0 pl-0">{{rescp content}}</textarea>
                                         </div>
                                     </div>
                                     <div class="d-flex flex-column">
                                     <div class="row" name="options">
-                                        <a id="edit{{id}}" name="edit" onclick="editList({{id}})" class="card-link col text-primary">수정하기</a>
-                                        <a id="del{{id}}" name="del" onclick="delList({{id}})" class="card-link col text-primary">삭제하기</a>
+                                        <a id="edit{{id}}" name="edit" onclick="editList({{id}}, 'memo')" class="card-link col text-primary">수정하기</a>
+                                        <a id="del{{id}}" name="del" onclick="delList({{id}}, 'memo')" class="card-link col text-primary">삭제하기</a>
                                         <a id="confirm{{id}}" name="confirm" onclick="confirmEdit({{id}})" class="card-link col text-primary" style="display:none">확인</a>
 
                                     </div>
@@ -47,7 +47,6 @@
                 </div>
                 {% endraw %}
             </script>
-            {{noBtnModal('memoDel', '삭제하시겠습니까?', 'delapprove', 'button')}}
                 </div>
             </div>
 
@@ -59,19 +58,23 @@
                         <div class="row">
                         {{# each data}}
                         <div class="col-lg-3 col-md-4 d-flex align-items-stretch mb-5">
-                            <div class="card">
+                            <div id="checkcard{{id}}" class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title mb-2">{{name}}</h5>
+                                    <h5 name='checkTitle' class="card-title mb-2 text-center" style="display:block">{{name}}</h5>
+                                    <textarea id="editCheckTitle{{id}}" style="display:none">{{name}}</textarea>
                                     {{#each content}}
                                     <div id="check{{@index}}" class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" id="load{{@index}}">
                                         <label class="custom-control-label" for="load{{@index}}">{{this}}</label>
+                                        <input type="text" id="newCheck{{id}}" class="form-control" style="display:none">
+
                                     </div>
                                     {{/each}}
                                     <div class="d-flex flex-column">
                                     <div class="row">
-                                        <a href="#!" class="card-link col">수정하기</a>
-                                        <a href="#!" class="card-link col">삭제하기</a>
+                                        <a id="checkEdit{{id}}" name="edit" onclick="editList({{id}}, 'check')" class="card-link col text-primary">수정하기</a>
+                                        <a id="checkDel{{id}}" name="del" onclick="delList({{id}}, 'check')" class="card-link col text-primary">삭제하기</a>
+                                        <a id="checkConfirm{{id}}" name="confirm" onclick="confirmCheckEdit({{id}})" class="card-link col text-primary" style="display:none">확인</a>
                                     </div>
                                 </div>
                                 </div>
@@ -87,49 +90,78 @@
 
 <script>
 
+var checktemplate;
+var memotemplate;
+
 Handlebars.registerHelper('rescp', function(data) {
     return new Handlebars.SafeString(this.content.replace(/\n/g, "<br>"))
 });
 
-function delList(id) {
-    openModal('memoDel')
-    console.log("userid>>{{userid}}")
-    $('#delapprove').click( function() {
-        delAjax('/memo/delete/{{userid}}/' + String(id), function(res) {
-            alert('삭제되었습니다')
-            closeModal('memoDel')
-            window.location.href = '/notes';
-            return
+
+function delList(id, mode) {
+    if (confirm('삭제하시겠습니까?')== true) {
+        console.log('/' + mode + 'list/delete/{{userid}}/' + String(id))
+        delAjax('/' + mode + 'list/delete/{{userid}}/' + String(id), function(res) {
+            $('#' + mode + 'card' + String(id)).remove()
         })
-    });
+    }
+    else {return ''}
 }
 
-function editList(id) {
+
+
+function beforeEdit(ids, divs, mode) {
+    if (mode ==='memo') {
+        $(divs).find("h5").css('display','block')
+        $(divs).find("h6").css('display','block')
+        $(divs).find("textarea").css('display','none')
+        $('#edit' + ids).show()
+        $('#del' + ids).show()
+        $('#confirm' + ids).css('display', 'none')
+    }
+    else {
+        $('#newCheck' + ids).css('display', 'none')
+        $('#checkEdit' + ids).show()
+        $('#checkDel' + ids).show()
+        $('#checkConfirm' + ids).css('display','none')
+    }
+}
+
+function editList(id, mode) {
     var ids = String(id)
-    var divs = $("#edit" + ids).parents("div")[3]
-    $(divs).find("h5").css('display','none')
-    $(divs).find("h6").css('display','none')
-    $(divs).find("textarea").css('display','block')
-    $('#edit' + ids).hide()
-    $('#del' + ids).hide()
-    $('#confirm' + ids).css('display', 'block')
-
+    var title = $("#editMemoTitle" + ids)
+    var content = $('#editMemoContent' + ids)
+    if (mode === 'memo') {
+       var divs = $('#memocard' + ids)
+        content.val().replace(/<br/g, '\n')
+        $(divs).find("h6").css('display','none')
+        content.css('display','block')
+        title.css('display', 'block')
+        $('#edit' + ids).hide()
+        $('#del' + ids).hide()
+        $('#confirm' + ids).css('display', 'block')
+        $(divs).find("h5").css('display','none')
+    } 
+    else {
+        var divs = $('#checkEdit'+ids).parents("div")[3]
+        $('#newCheck' + ids).css('display', 'block')
+    }   
 }
 
-function confirmEdit(id) {
-    var divs = $("#edit" + String(id)).parents("div")[3]
-    console.log("dd")
-    var newMemo = {}
-    newMemo['name'] = $('#editMemoTitle').val()
-    console.log('name>>', newMemo['name'])
-    newMemo['content'] = $('#editMemoContent').val()
-    console.log('content>>', newMemo['content'])
-    // endAjax(urls, type, data, fn)
-    sendAjax('/memo/edit/{{userid}}/' + String(id), 'POST', newMemo, function(res) {
-        console.log(res)
-        $(divs).find("h5").text(newMemo['title'])
-        $(divs).find("h6").text(newMemo['content'])
+// function confirmCheckEdit(id) {
 
+// }
+function confirmEdit(id) {
+    var ids = String(id)
+    var divs = $("#memocard" + ids)
+    var newMemo = {}
+    newMemo['name'] = $('#editMemoTitle' + ids).val()
+    newMemo['content'] = $('#editMemoContent'+ids).val()
+    sendAjax('/memo/edit/{{userid}}/' + ids, 'POST', newMemo, function(res) {
+        console.log(res)
+        $(divs).find("h5").text(newMemo['name'])
+        $(divs).find("h6").html((newMemo['content']).replace(/\n/g, '<br>'))
+        beforeEdit(ids, divs, 'memo')
         return
     })
 
@@ -149,12 +181,15 @@ $('#checklist-tab').click( function() {
     });
 })
 
-var nametemplate;
+
 function hbs(sourceId, data, resultId) {
     var source = document.getElementById(sourceId).innerHTML;
     var template = Handlebars.compile(source);
-    if (resultId === 'hbsMemolist' | resultId === 'hbsChecklist') {
-        nametemplate=template;
+    if (resultId === 'hbsChecklist') {
+        checktemplate = template;
+    }
+    else if (resultId === 'hbsMemolist'){
+        memotemplate = template;
     }
     render(template, data, resultId)
     } 

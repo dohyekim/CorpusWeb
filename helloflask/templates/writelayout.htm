@@ -23,9 +23,6 @@
                     <select id="memolist" name="memolist" class="browser-default custom-select">
                     </select>
                     {%endcall%}
-                    <div>
-                        <button id="delmemoBtn" type="button" class="btn btn-sm btn-danger" style="display:none">Memo 삭제하기</button>
-                    </div>
                     
                 </div>
 
@@ -70,9 +67,7 @@
                     <select id="namelist" name="namelist" class="browser-default custom-select">
                     </select>
                     {%endcall%}
-                    <div id="del">
-                        <button id="delcheckBtn" type="button" class="btn btn-sm btn-danger" style="display:none">checklist 삭제하기</button>
-                    </div>
+
                 <!-- Card content -->
                 </div>
                 <div id="checklist" class="card-body">
@@ -134,8 +129,8 @@ var loadtemplate;
 loadCheckData('loadChcklist', '/checklist/{{userid}}', 'namelist')
 loadCheckData('loadMemo', '/memo/{{userid}}', 'memolist')
 
-loadList('load', 'delcheckBtn', 'namelist', '/posting/write/checklist', 'check-template', 'check-result', 'loadModal')
-loadList('mload', 'delmemoBtn', 'memolist', '/posting/write/memolist', 'memo-template', 'memo-result', 'mloadModal')
+loadList('load',  'namelist', '/posting/write/checklist', 'check-template', 'check-result', 'loadModal')
+loadList('mload', 'memolist', '/posting/write/memolist', 'memo-template', 'memo-result', 'mloadModal')
 
 $('#postBtn').click( function() {
     if ($('#title').val() == false) {
@@ -156,15 +151,7 @@ $(document).ready(function () {
     hbs('name-template', '', 'namelist');
 });
 
-function delList(btnId, url, deldata, result) {
-    $('#' + btnId).click( function() {
-        delAjax(url+String(deldata), function ddddd() {
-            $('#' + result).text('');
-            $('#' + btnId).hide()
-        })
 
-    })
-}
 
 function hbs(sourceId, data, resultId) {
     var source = document.getElementById(sourceId).innerHTML;
@@ -187,10 +174,9 @@ function render(template, data, resultId) {
   document.getElementById(resultId).innerHTML = template(data);
   } 
 
-function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
+function loadList(btnId, listId, url, templateId, resultId, modalId) {
     var loadJson = {};
     $('#' + btnId).click(function() {
-    $('#' + delbtnId).show()
     
     var chck = $('#' + listId + ' option:selected').text();
     loadJson['name'] = chck;
@@ -200,12 +186,10 @@ function loadList(btnId, delbtnId, listId, url, templateId, resultId, modalId) {
                 console.log("id>>>>>>>>>>>>> ", res['id'])
                 console.log('/checklist/delete/{{userid}}' + checkId)
                 checkId = res['id'];
-                delList('delcheckBtn','/checklist/delete/{{userid}}/', checkId, 'check-result')
             }
             else {
                 memoId = res['id'];
                 console.log('/memo/delete/{{userid}}/' + memoId)
-                delList('delmemoBtn','/memo/delete/{{userid}}/', memoId, 'memo-result')
             }
         hbs(templateId, {'loadData':res}, resultId)
         $('div[name]').html($('div[name]').text().trim().replace(/\n/g, '<br>'))

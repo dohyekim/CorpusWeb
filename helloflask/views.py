@@ -47,11 +47,12 @@ def editchecklist(userid, id):
         db_session.merge(memo)
         db_session.commit()
         print("Update Success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        return redirect('/notes')
+        return jsonify({'status':'success'})
 
     except Exception as err:
         db_session.rollback()
         print("\n \n \n Error!!!!!!!!!!!!!!!!!!!!!!", err)
+        return jsonify({'status':'fail'})
 
 @app.route('/write/revision/<userid>/<id>', methods=['GET'])
 def editajax(userid, id):
@@ -161,22 +162,23 @@ def delpost(userid, postid):
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
 
-@app.route('/checklist/delete/<userid>/<id>', methods=['DELETE'])
-def delchecklist(userid, id):
+@app.route('/checklist/delete/<userid>/<ids>', methods=['DELETE'])
+def delchecklist(userid, ids):
     print("delete view")
-    dchecklist = Checklist.query.filter('user_id=:userid and id=:id').params(userid=userid,id=id).first()
+    dchecklist = Checklist.query.filter('user_id=:userid and id=:id').params(userid=userid,id=ids).first()
+    print("checklist to delete >>>>>>>>> ", dchecklist)
     try:
         db_session.delete(dchecklist)
         db_session.commit()
         print("-------------------------------------------------Delete success")
-        return ''
+        return jsonify({'status':'success'})
     except Exception as err:
         db_session.rollback()
         print("\n\n\n--------------------------Fail Delete", err, "\n\n\n\n")
         return ''
 
 
-@app.route('/memo/delete/<userid>/<id>', methods=['DELETE'])
+@app.route('/memolist/delete/<userid>/<id>', methods=['DELETE'])
 def delmemo(userid, id):
     dmemo = Memo.query.filter('user_id =:userid and id=:id').params(userid=userid, id=id).first()
     try:
@@ -196,7 +198,7 @@ def postmemo():
     memoJson = request.json
     print("\n\n\n\n\n\n", memoJson)
     userid = session['loginUser']['userid']
-    title = memoJson['title']
+    title = memoJson['name']
     memo = memoJson['content']
     m = Memo(userid, title, memo)
     try:

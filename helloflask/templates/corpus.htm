@@ -175,29 +175,25 @@
             <div id="memoTitleArea" class="md-form pink-textarea active-pink-textarea-2">
               <textarea id="memo-title" class="md-textarea form-control" rows="1"></textarea>
               <label for="memo-title">메모 이름</label>
-              <button onclick="newmemo()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
-                <i class="fas fa-plus" aria-hidden="true"></i>
-              </button>
             </div>
           </div>
           <!-- Material input -->
           <div id="removed-memo" class="form-group pink-border-focus">
             <label for="memo-content"></label>
             <textarea class="form-control" id="memo-content" rows="3"></textarea>
-            <button type="button" id="newmemobtn" class="btn btn-sm btn-default px-3 text-right">
-              <i class="fas fa-plus" aria-hidden="true"></i>
-            </button>
           </div>
           <div id="memoarea">
           </div>
         </div>
         
         <div class="container">
-          {% call modalmcr('default float-right', 'memobtn','memo', '저장하기', 'memoModal', '저장하시겠습니까?', 'button' ) %}
-          {% endcall %}
+            <button id="savebtn" type="button" class="btn btn-sm btn-default float-right">
+                저장하기
+            </button>
+
         </div>
         <div>
-          <button id="addMemoBtn" class="btn btn-sm btn-primary px-3 float-right" type="button" >새로 만들기</button>
+          <button id="addMemoBtn" class="btn btn-sm btn-primary px-3 float-right" type="button" style="display:none" >새로 만들기</button>
         </div>
       </div>
     </div>
@@ -208,77 +204,51 @@
 
 <script>
 $('#addMemoBtn').click( function() {
+  $('#savebtn').show()
   $('#memo-title').val('')
   $('#memo-content').val('')
-  $('#addMemoBtn').css('display:none')
-  $('#memobtn').show()
   $('#memoTitleArea').show()
   $('#removed-memo').show()
   $('#newmemo h4.card-title').text('')
   $('#memoarea').text('')
+  $('#addMemoBtn').css('display', 'none')
 
 })
 
-$('#newmemobtn').click( function() {
+
+
+// memoarea
+$('#savebtn').click( function() {
+  var memoTitle = $('#memo-title').val();
   var memoContent = $('#memo-content').val().replace(/\n/g,'<br>');
-  var memoTitle = $('#memo-title').val();
-  if (memoTitle == false) {
-    alert("먼저 메모 이름을 입력해주세요!")
-    $('#memo-title').focus()
-    return
-  }
-  else if (memoContent == false) {
-    alert('내용을 입력해주세요!')
-    return
-  }
-  $('#removed-memo').hide()
-  $('#memoarea').html(memoContent)
-})
-
-function newmemo() {
-  var memoTitle = $('#memo-title').val();
   if (memoTitle == false) {
     alert('제목을 입력해주세요!')
     return
   }
+
+  else if (memoContent == false) {
+    alert('내용을 입력해주세요!')
+    return
+  }
   $('#newmemo h4.card-title').text(memoTitle)
   $('#memoTitleArea').hide()
-};
+  $('#removed-memo').hide()
+  $('#memoarea').html(memoContent)
 
 
-$('#memobtn').click( function() {
-  if ($('#memoarea').text() == false) {
-    alert("메모를 먼저 작성해주세요")
-    $('#memobtn').removeAttr('data-target')
-    return
-  }
-})
-// memoarea
-$('#memo').click( function() {
   var savedata = {};
-  var memoTitle = $('h4.card-title').text();
-  var memoContent = $('#memoarea').text()
-  if (memoContent == false){
-    alert("메모를 작성해주세요")
-    closeModal('memoModal')
-    return
-  }
-  else if (memoContent != false) {
-    savedata['title'] = memoTitle;
-    savedata['memo'] = $('#memoarea').html().replace(/<br>/g,'\n');
-  } 
+  savedata['name'] = memoTitle;
+  savedata['content'] = $('#memoarea').html().replace(/<br>/g,'\n');
 
   sendAjax('/posting/memo', 'POST', savedata, function(res) {
     if (res['status'] === 'fail') {
         alert('저장에 실패했습니다! 다시 시도해주세요')
       }
       else {
-        alert('저장 성공!')
-        $('#memobtn').css('display', 'none')
         $('#addMemoBtn').css('display', 'block')
+        $('#savebtn').hide()
 
       }
-      closeModal('memoModal')    
   })
 
 })
