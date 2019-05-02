@@ -104,7 +104,7 @@ class Checklist(Base):
 
     #tostring
     def __repr__(self):
-        return '%s, %s, %s' %(self.user_id, self.name, self.content)
+        return '%s, %s, %s, %s' %(self.user,self.user_id, self.name, self.content)
     
     def json (self) :
         j = {c.name: getattr(self, c.name) for c in self.__table__.columns}

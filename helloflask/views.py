@@ -39,9 +39,10 @@ def editchecklist(userid, id):
     req = request.json
     userid = session['loginUser']['userid']
     name = req['name']
-    content = req['content']
+    content = ",".join(req['content'])
     print("name>>", name, "content>>", content)
-    check = Check(userid, name, content)
+    check = Checklist(userid, name, content)
+    print("check>>>>>",check)
     check.id = id
     try:
         db_session.merge(check)
@@ -90,6 +91,7 @@ def edit(userid, id):
     content = request.form.get('content')
     print("content>>", content)
     post = Post(title, content, userid)
+    print(post)
     post.postid = id
 
     try:

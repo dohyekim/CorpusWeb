@@ -91,9 +91,7 @@
               <input type="text" id="newchecklist" class="form-control">
               <label id = "newchecklistlabel" for="newchecklist"></label>
             </h4>
-            <button onclick="newchecklist()" type="button" id="newchecklistbtn" class="btn btn-sm btn-default px-3 text-right">
-                <i class="fas fa-plus" aria-hidden="true"></i>
-              </button>
+
             </div>
             <div class="md-form" id="newchecklistarea">
               <h4 id="checktitle" class="card-title"> 
@@ -171,10 +169,7 @@ function newchecklist() {
 
 var ids = 1;
 $('#newcheckbtn').click( function() {
-  if ($('#newchecklistarea').text().trim() == '') {
-    alert("체크리스트 이름을 먼저 정해주세요")
-    return
-  }
+
   var txt = $('#newcheck').val();
   $('#newcheck').val('');
   var htmls = '<div class="custom-control custom-checkbox" name="checklist" id="checkboxarea' + String(ids) + '"> \
@@ -209,6 +204,8 @@ function setYellow() {
 
 var savedata = {};
 $('#savebtn').click( function() {
+
+  newchecklist()
   var savedt = []
   var l = $('input.checknew').next('label').length;
   if (l == 0) {
@@ -216,7 +213,10 @@ $('#savebtn').click( function() {
     return
   } 
 
-    savedata['checklist'] = $('#checkarea').text().trim().split("     ")
+    $("#checkarea label").each(function(){    
+        savedt.push($(this).text());
+      })
+    savedata['checklist'] = savedt
     savedata['name'] = $('#newchecklistarea').text().trim();
 
     sendAjax('/posting/save/{{userid}}', 'POST', savedata, function(res) {

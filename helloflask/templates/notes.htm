@@ -62,14 +62,16 @@
                                 <div class="card-body">
                                     <h5 name='checkTitle' class="card-title mb-2 text-center" style="display:block">{{name}}</h5>
                                     <textarea id="editCheckTitle{{id}}" style="display:none">{{name}}</textarea>
+                                    <div class="checkwrap{{id}}">
                                     {{#each content}}
-                                    <div class="custom-control custom-checkbox check{{../id}}">
-                                        <input type="checkbox" class="custom-control-input" id="{{../id}}load{{@index}}">
-                                        <label class="custom-control-label" for="{{../id}}load{{@index}}">{{this}}</label>
-                                    </div>
-                                    {{/each}}
-                                    <div id="checkarea{{id}}">
+                                        <div class="custom-control custom-checkbox check{{../id}}">
+                                            <input type="checkbox" class="custom-control-input" id="{{../id}}load{{@index}}">
+                                            <label class="custom-control-label" for="{{../id}}load{{@index}}">{{this}}</label>
                                         </div>
+                                        {{/each}}
+                                        <div id="checkarea{{id}}">
+                                        </div>
+                                    </div>
                                     <div class="add{{id}}" style="display:none"> 
                                         <textarea id="editCheckContent{{id}}"></textarea>
                                     </div>
@@ -115,33 +117,36 @@ function delList(id, mode) {
 
 function saveCheck(id) {
     var newCheck = {}
-    newCheck['name'] = $('h5[name="checkTitle"]').text().trim();
-    newCheck['checklist'] = $('#checkarea').text().trim().split("     ")
-    sendAjax('/checklist/edit/{{userid}}/' + id, 'POST', newMemo, function(res) {
-        console.log(res)
-        $('h5[name="checkTitle"]').text(newCheck['name'])
-        beforeEdit()
-        return
+    var checkContent = []
+    ids = String(id)
+    newCheck['name'] = $('#editCheckTitle' + ids).val();
+    console.log("title>>>", newCheck['name'])
+    $("div.checkwrap" +ids + " label").each(function(){    
+        checkContent.push($(this).text());
     })
+    newCheck['content'] = checkContent
+    sendAjax('/checklist/edit/{{userid}}/' + ids, 'POST', newCheck, function(res) {
+        console.log(res)
+        getAjax('/checklist/{{userid}}', 'GET', function(res) {
+            console.log("Res>>>>>", res)
+            render(checktemplate, {'data':res}, 'hbsChecklist')
+        })
+    })
+
+    console.log(checkContent);
 
 }
 
 
-function beforeEdit(ids, divs, mode) {
-    if (mode ==='memo') {
-        $(divs).find("h5").css('display','block')
-        $(divs).find("h6").css('display','block')
-        $(divs).find("textarea").css('display','none')
-        $('#edit' + ids).show()
-        $('#del' + ids).show()
-        $('#confirm' + ids).css('display', 'none')
-    }
-    else {
-        $('#newCheck' + ids).css('display', 'none')
-        $('#checkEdit' + ids).show()
-        $('#checkDel' + ids).show()
-        $('#checkAdd' + ids).css('display','none')
-    }
+function beforeEdit(ids, divs) {
+    
+    $(divs).find("h5").css('display','block')
+    $(divs).find("h6").css('display','block')
+    $(divs).find("textarea").css('display','none')
+    $('#edit' + ids).show()
+    $('#del' + ids).show()
+    $('#confirm' + ids).css('display', 'none')
+    
 }
 
 var num = 1;
@@ -161,22 +166,23 @@ function editList(id, mode) {
         $(divs).find("h5").css('display','none')
     } 
     else {
+        $('div.add'+ids).css('display','block')
+        var divcnt = $('#checkcard' + ids + ' div.card-body div.check' + ids)
+        for (var k =0; k<divcnt.length; k++) {
+            $(divcnt[k]).append('<span type="button" class="badge badge-danger float-right"><i class="fas fa-times" aria-hidden="true"></i></span>')
+        }
         $('#checkSave' + ids).css('display','block')
         $('#checkcard' + ids + ' h5').css('display','none')
         $('#editCheckTitle' + ids).css('display','block')
         $('#checkAdd' + ids).css('display','block')
         $('#checkDel' + ids).hide()
         $('#checkEdit' + ids).hide()
-        $('div.add'+ids).css('display','block')
-        var divcnt = $('#checkcard' + ids + ' div.card-body div.check' + ids)
-        for (var k =0; k<divcnt.length; k++) {
-            $(divcnt[k]).append('<span type="button" class="badge badge-danger float-right"><i class="fas fa-times" aria-hidden="true"></i></span>')
-        }
-        delList(ids)
+        delCheckList(ids)
+
     }   
 }
 
-function delList(ids) {
+function delCheckList(ids) {
     $("div[name='checklist" + ids +"'] span").click( function() {
             $(this).closest("div").remove()
         })
@@ -189,7 +195,7 @@ function addCheckEdit(id) {
     <label class="custom-control-label" id="newlabel' + String(num) + '"' + '\
     for="' + String(num) + '"> </label> <span type="button" class="badge badge-danger float-right"><i class="fas fa-times" aria-hidden="true"></i></span> </div>';
     $(htmls).appendTo('#checkarea'+ids)
-    delList(ids)
+    delCheckList(ids)
     $('#newlabel' + String(num)).text(editCheck.val());
     num = num + 1;
     editCheck.val('')
@@ -205,7 +211,7 @@ function confirmEdit(id) {
         console.log(res)
         $(divs).find("h5").text(newMemo['name'])
         $(divs).find("h6").html((newMemo['content']).replace(/\n/g, '<br>'))
-        beforeEdit(ids, divs, 'memo')
+        beforeEdit(ids, divs)
         return
     })
 

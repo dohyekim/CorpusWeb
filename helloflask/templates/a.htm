@@ -191,3 +191,9 @@ delAjax('/checklist/delete/{{userid}}/'+String(deldata), function ddddd() {
 <button id="savebtn" type="button" class="btn btn-sm btn-default float-right">
     저장하기
 </button>
+
+newCheck['content'] = $('#checkarea' + ids).text().trim().split("     ")
+sendAjax('/checklist/edit/{{userid}}/' + ids, 'POST', newCheck, function(res) {
+    console.log(res)
+    return
+})
