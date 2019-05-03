@@ -84,20 +84,23 @@
             <div>
               <li>
                 <div class="row">
-                  <div class="col-8 text-left">
-                    <span class="foresentence{{@index}}">
-                      <button class="smbt btn-sm btn btn-link px-0 py-0" id="foresentence{{@index}}" onclick='showMore("{{escp foresentence}}", "foresentence{{@index}}")'>...</button>
-                    </span>
-                    {{#if korsentences}}
-                    {{korsentences}}
-
-                    {{else}}
-                    {{engsentences}}
-                    {{/if}}
-                    <span class="lastsentence{{@index}}">
-                      <button class="smbt btn-sm btn btn-link px-0 py-0" id="lastsentence{{@index}}" onclick='showMore("{{escp lastsentence}}", "lastsentence{{@index}}")'>...</button>
-                    </span>
-                    <br> 
+                  <div class="col-8 text-left d-flex flex-column mb-3">
+                    <div>
+                      <span class="foresentence{{@index}}">
+                        <button class="smbt btn-sm btn btn-link px-0 py-0" id="foresentence{{@index}}" onclick='showMore("{{escp foresentence}}", "foresentence{{@index}}")'>...</button>
+                      </span>
+                      {{#if korsentences}}
+                      {{korsentences}}
+                      
+                      {{else}}
+                      {{engsentences}}
+                      {{/if}}
+                      <span class="lastsentence{{@index}}">
+                        <button class="smbt btn-sm btn btn-link px-0 py-0" id="lastsentence{{@index}}" onclick='showMore("{{escp lastsentence}}", "lastsentence{{@index}}")'>...</button>
+                      </span>
+                    </div>
+                      <br> 
+                    <div>
                       <span class="foreresult{{@index}}">
                         <button class="smbt btn-sm btn btn-link px-0 py-0" id="foreresult{{@index}}" onclick='showMore("{{escp foreresult}}", "foreresult{{@index}}")'>...</button>
                       </span>
@@ -105,6 +108,13 @@
                       <span class="lastresult{{@index}}">
                         <button class="smbt btn-sm btn btn-link px-0 py-0" id="lastresult{{@index}}" onclick='showMore("{{escp lastresult}}", "lastresult{{@index}}")'>...</button>
                       </span>
+                    </div>  
+                      <br>
+                      
+                      <div class="text-right mt-auto">
+                        <a href="https://www.ted.com/talks/{{tid}}" target="_blank" class="font-italic text-primary">
+                          <small>출처: {{title}} by {{speaker}}</small></a>
+                      </div>
                   </div>
 
                   <div class="col-4"> 
@@ -164,7 +174,8 @@
       </div>
       <!--Pagination-->
       <!-- Card -->
-      <div class="col-3 card">
+      <div id="page-wrap">
+      <div class="col-3 card" id="sidebar">
           <!-- Card content -->
         <div class="card-body">
           <!-- Title -->
@@ -195,6 +206,7 @@
         <div>
           <button id="addMemoBtn" class="btn btn-sm btn-primary px-3 float-right" type="button" style="display:none" >새로 만들기</button>
         </div>
+      </div>
       </div>
     </div>
   </div>

@@ -88,7 +88,6 @@ class ElasticSearch():
     def engtoKorequiv(self, search):
         engsentences = self.engtoKor(search)
         tshows = []
-        tags = []
         lang = 'English'
         n=1
 
@@ -136,14 +135,18 @@ class ElasticSearch():
             # return
 
              # tags 가져오기
-            tagSearch = 'select tags from Talk where talk_id = {}'.format(tid)
+             
+            tagSearch = ''' select t.title, t.tags, s.name from Talk t inner join TalkSpeaker ts on                     t.talk_id = ts.talk_id
+	        inner join Speaker s on ts.speaker_id= s.speaker_id where t.talk_id={}'''.format(tid)
             cur = conn.cursor()
             cur.execute(tagSearch)
             tagrows = cur.fetchall()
             cur.close()
-            # print("tt>>", tagrows)
+            print("tt>>", tagrows)
 
-            show['tags'] = tagrows[0][0].split(',')
+            show['tags'] = tagrows[0][1].split(',')
+            show['title'] = tagrows[0][0]
+            show['speaker'] = tagrows[0][2]
             tshows.append(show)
             tshowss = sorted(tshows, key = lambda t:t['number'], reverse=True)
             n+=1
@@ -206,7 +209,6 @@ class ElasticSearch():
         lang = 'Korean'
         korsentences = self.kortoEng(search)
         tshows = []
-        tags = []
         n=1
 
         # print("kkkkkkkkkkk>", self.kortalk)
@@ -266,7 +268,8 @@ class ElasticSearch():
             # show = {'number' : n, 'tid' : tid, 'cue':cue, 'korsentences':korsentences[k], 'result':strs, 'isShowTags': False, 'lang':lang}
 
              # tags 가져오기
-            tagSearch = 'select tags from Talk where talk_id = {}'.format(tid)
+            tagSearch = ''' select t.title, t.tags, s.name from Talk t inner join TalkSpeaker ts on                     t.talk_id = ts.talk_id
+	        inner join Speaker s on ts.speaker_id= s.speaker_id where t.talk_id={}'''.format(tid)
             cur = conn.cursor()
             cur.execute(tagSearch)
             tagrows = cur.fetchall()
@@ -284,7 +287,9 @@ class ElasticSearch():
             #         tags.append(tag)
 
             # show['tags'] = tags
-            show['tags'] = tagrows[0][0].split(',')
+            show['tags'] = tagrows[0][1].split(',')
+            show['title'] = tagrows[0][0]
+            show['speaker'] = tagrows[0][2]
 
             # self.shows[n] = show
             tshows.append(show)

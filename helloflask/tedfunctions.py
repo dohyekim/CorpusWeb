@@ -17,9 +17,11 @@ def getLastId(sql):
     cur.execute(sql)
     lastid = cur.fetchall()
     cur.close()
-    return lastid   
+    return lastid 
 
-def saveUpdata(updatesql, ids, diff='isKorean'):
+
+
+def saveUpdate(updatesql, ids, diff='isKorean'):
     try: 
         print(" UPDATE STARTED ")
         conn = get_conn()
@@ -63,7 +65,7 @@ def updateTalk():
                                 where e.talk_id = t.talk_id)
                     where talk_id >= ''' + str(uplastid) + ';'
 
-    saveUpdata(sqlUpdate, uplastid)
+    saveUpdate(sqlUpdate, uplastid)
 
 
 def updateDiff():
@@ -98,7 +100,7 @@ def updateDiff():
         kors = korcnt[0][0]
     else:
         sqlupdate_2 = 'update Talk set diff = 2 where talk_id = {}'.format(uplastid)
-        saveUpdata(sqlupdate_2, uplastid, '2222222')
+        saveUpdate(sqlupdate_2, uplastid, '2222222')
         return
 
     # 3개 이상 차이가 나면 skip
@@ -110,7 +112,7 @@ def updateDiff():
 
     if abs(engs - kors) > 3 and kors != 0:
 
-        saveUpdata(sqlupdate_0, uplastid, '00000000')
+        saveUpdate(sqlupdate_0, uplastid, '00000000')
 
     else:
-        saveUpdata(sqlupdate_1, uplastid, '111111111')
+        saveUpdate(sqlupdate_1, uplastid, '111111111')
