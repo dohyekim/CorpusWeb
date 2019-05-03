@@ -197,3 +197,18 @@ sendAjax('/checklist/edit/{{userid}}/' + ids, 'POST', newCheck, function(res) {
     console.log(res)
     return
 })
+
+mysql_url = "mysql+pymysql://root:" + passwd + "@35.200.21.188/corpusdb?charset=utf8"
+
+import os
+
+passwd = os.getenv('passwd')
+
+def get_conn():
+    return pymysql.connect(
+        host='35.200.21.188',
+        user='root',
+        password=passwd,
+        port=3306,
+        db='corpusdb',
+        charset='utf8')
