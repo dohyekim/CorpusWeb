@@ -1,10 +1,13 @@
 import pymysql
+import os
+
+passwd = os.getenv('passwd')
 
 def get_conn():
     return pymysql.connect(
-        host='127.0.0.1',
-        user='dooo',
-        password='1234',
+        host='35.200.21.188',
+        user='root',
+        password=passwd,
         port=3306,
         db='corpusdb',
         charset='utf8')

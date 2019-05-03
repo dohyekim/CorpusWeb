@@ -133,11 +133,7 @@
 
 <script>
 
-Handlebars.registerHelper('datefmt', function (dt) {
-  var m = moment(dt);
-  var output = m.format("YYYY MMMM Do, a h:mm");
-  return output; 
-}); 
+
 
 Handlebars.registerHelper('numbering', function(num) {
   return num + 1
@@ -251,9 +247,7 @@ function hbs(sourceId, data, resultId) {
       render(template, data, resultId)
     }    
   } 
-function render(template, data, resultId) {
-  document.getElementById(resultId).innerHTML = template(data);
-  } 
+
 
 $(document).ready( function() {
   getAjax('/posting/lists/{{userid}}', 'GET', function(res) {

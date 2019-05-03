@@ -111,6 +111,7 @@ def edit(userid, id):
 def memo(userid):
     userid = session['loginUser']['userid']
     memo = Memo.query.options(subqueryload(Memo.user)).filter('user_id = :userid').params(userid=userid).all()
+    print("memo>>>", memo)
     memolst = []
     for m in memo:
         mJson = m.json()
@@ -304,6 +305,7 @@ def lists(userid):
         return redirect('/login')
     else:
         userid = session['loginUser']['userid']
+        
         posts = Post.query.order_by(Post.postid.desc()).options(subqueryload(Post.user)).filter('user_id = :userid').params(userid=userid).all()
         lsts = []
         for post in posts:

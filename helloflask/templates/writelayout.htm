@@ -170,9 +170,6 @@ function hbs(sourceId, data, resultId) {
     render(template, data, resultId)
   } 
 
-function render(template, data, resultId) {
-  document.getElementById(resultId).innerHTML = template(data);
-  } 
 
 function loadList(btnId, listId, url, templateId, resultId, modalId) {
     var loadJson = {};
