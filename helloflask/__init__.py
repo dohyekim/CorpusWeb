@@ -2,14 +2,16 @@ from flask import Flask, render_template, url_for
 from datetime import timedelta
 from helloflask.init_db import init_database, db_session
 import os
+import secrets
 
 app = Flask(__name__)
 import helloflask.views
 app.debug = True
 
+keys = secrets.token_hex(32)
 app.config.update(
 	# salt
-    SECRET_KEY='X1243yRH!mMwf',
+    SECRET_KEY=keys,
 	SESSION_COOKIE_NAME='corpus_flask_session',
 	PERMANENT_SESSION_LIFETIME=timedelta(31)      # 31 days
 )
