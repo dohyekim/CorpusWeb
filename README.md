@@ -1,2 +1,7 @@
-# CorpusWeb
-This project is to make my own English corpus
+제목
+
+동기/needs
+목적
+팀원
+팀원별 역할
+가장 힘들었던 점 
