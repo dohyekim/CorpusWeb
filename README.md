@@ -11,7 +11,9 @@ Corpus refers to a collection of both spoken and written language. The original 
   
 <h3> 3. 기능/Features </h3>
 
-<h4> 3.1. Corpus </h4> Corpus 페이지에서는 내가 쓸 단어가 어떤 문장과 context안에서 쓰였는지를 확인할 수 있습니다. 단어나 구문을 입력한 후 검색 버튼을 누르면 그 단어 혹은 구문이 쓰인 문장들이 나옵니다. 앞뒤에 있는 "..." 버튼을 클릭하면 각각 앞의 문장과 뒤의 문장을 추가로 확인할 수 있습니다. 더불어 그 단어/구문이 쓰인 영상의 출처와 주소가 나와있어서 전체 영상/글을 보고 싶은 경우는 직접 클릭해서 찾아갈 수 있습니다. 문장들 옆에 제시되는 tags들은 그 단어/구문이 쓰인 영상의 tag들을 말합니다. 기술어의 경우 어떤 주제와 어떤 분야에서 쓰였는지 등에 대해 알 수 있습니다. 문장들을 읽고 나서 몇 가지 기록할 것이 생기면 언제든지 메모할 수 있도록 메모 기능도 있습니다. 이 모든 기능은 영어와 한국어 두 언어 모두 지원합니다.
+<h4> 3.1. Corpus </h4> 
+
+Corpus 페이지에서는 내가 쓸 단어가 어떤 문장과 context안에서 쓰였는지를 확인할 수 있습니다. 단어나 구문을 입력한 후 검색 버튼을 누르면 그 단어 혹은 구문이 쓰인 문장들이 나옵니다. 앞뒤에 있는 "..." 버튼을 클릭하면 각각 앞의 문장과 뒤의 문장을 추가로 확인할 수 있습니다. 더불어 그 단어/구문이 쓰인 영상의 출처와 주소가 나와있어서 전체 영상/글을 보고 싶은 경우는 직접 클릭해서 찾아갈 수 있습니다. 문장들 옆에 제시되는 tags들은 그 단어/구문이 쓰인 영상의 tag들을 말합니다. 기술어의 경우 어떤 주제와 어떤 분야에서 쓰였는지 등에 대해 알 수 있습니다. 문장들을 읽고 나서 몇 가지 기록할 것이 생기면 언제든지 메모할 수 있도록 메모 기능도 있습니다. 이 모든 기능은 영어와 한국어 두 언어 모두 지원합니다.
 
 For Corpus page, you can put words or phrases to search where it is used, in which sentence or context. There are "..."button which helps you to see more sentences before the first sentence, and after the last sentence respectively. At the bottom of each result section, you can check original data and you are directly linked to the site if you click it. Beside sentences, tags for the data are provided to help you learn which fields or topics the words/phrases are used. If you want to jot down some notes, you can use memo section while studying. This service is available in both Korean and English.
 
