@@ -1,6 +1,5 @@
 import smtplib
 
-
 def send_email(to, subject, msg):
     try:
         server = smtplib.SMTP('smtp.gmail.com:587')

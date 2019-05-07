@@ -72,9 +72,9 @@
           
     <!--Card-->
     <div class="row">
-      <div class="col card mb-4 wow fadeIn">
+      <div class="col-lg-8 card mb-4 wow fadeIn">
         <!--Card content-->
-        <div class="card-body text-center">
+        <div class="col-lg-12 card-body">
           <p class="h5 my-4">비교</p>
           <p id="compare-content">비교하고 싶은 글을 최대 2개 선택해주세요.</p>
         </div>
@@ -304,10 +304,12 @@ function comparetwo() {
       $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(3) > td').text('바뀜')
       $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table > tbody > tr:nth-child(4) > td').text('삭제됨')
       $('table.diff').css('font-family', 'Arial')
-      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2)').css('text-align', 'center')
+      $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2)').css('text-align', 'left')
       $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table').removeAttr('border')
       $('table[id]').attr('align','center')
       $('table[summary]').attr('align','right')
+      $('p#compare-content table td').addClass('compTable')
+      $('p#compare-content table td').removeAttr('nowrap')
   })
 }
 

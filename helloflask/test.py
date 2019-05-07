@@ -1,8 +1,8 @@
-a = 'a,b,c,d,e'
-b = a.split(',')
-print(b) # ['a', 'b', 'c', 'd', 'e']
-print(type(b)) #<class 'list'>
+import re
 
+string = 'asejltase. faejta;et. faljet;akejtak.'
+aaa = re.compile('\.\s')
+bbb = re.sub(aaa, '\n', string)
+print(string)
 
-for i in range(1,5):
-    print(i)
+print(bbb)

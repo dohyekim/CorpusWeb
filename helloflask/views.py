@@ -10,6 +10,7 @@ from helloflask.forms import RegistrationForm, PostForm
 import difflib
 from helloflask.email import send_email
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+import re
 
 # import json
 
@@ -292,7 +293,7 @@ def getwrite():
     if session.get('loginUser'):
         userid = session['loginUser']['userid']
 
-        return render_template('writelayout.htm', title="New Post", userid=userid)
+        return render_template('writelayout.htm', action="/posting/write", title="New Post", userid=userid)
 
     else:
         session['next'] = request.url
@@ -320,9 +321,12 @@ def postingcompare():
     if not session.get('loginUser'):
         return redirect('/login')
     htmls = request.json
-    print("htmls>>>>>> ", htmls)
-    htm_1 = htmls['1'].splitlines()
-    htm_2 = htmls['2'].splitlines()
+    # for i in htmls['1']:
+    pattern = re.compile('\.\s')
+    html_1 = re.sub(pattern, '.\n', htmls['1'])
+    html_2 = re.sub(pattern, '.\n', htmls['2'])
+    htm_1 = html_1.splitlines()
+    htm_2 = html_2.splitlines()
     d2 = difflib.HtmlDiff()
     diffHtml = d2.make_file(htm_1, htm_2)
     # print(diffHtml)
