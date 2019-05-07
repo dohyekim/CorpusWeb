@@ -1,6 +1,7 @@
 <h3> 1. 제목/Title </h3>
 
-MyCorpus <br> *Written by Dohye(Eileen) Kim*
+MyCorpus <br>
+*Written by Dohye(Eileen) Kim*
 
 
 <h3> 2. 동기/Needs </h3>
@@ -67,5 +68,14 @@ https://trello.com/b/GtXR1mwS/corpus-boards
   
 지금은 검색 결과를 도출해내는 함수를 사용하고 있지만 검색어로 들어올 수 있는 단어/구문에 제약이 있습니다. 예를 들어 영어의 경우 첫 단어가 대문자냐 소문자냐를 구분하지 않기 위해서 정규식을 사용했지만, 검색 엔진을 사용하면 대소문자 구분뿐만 아니라 NLP등을 이용해 띄어쓰기나 동/명사의 기본형으로 변환시켜주는 검색 엔진을 사용하려 합니다.
 
-<h4> 9.2. platform for sharing tips </h4>
-<h4> 9.3. use the final draft as input data </h4>
+<h4> 9.2. 플랫폼 만들기(platform for sharing tips) </h4>
+
+글쓰기 혹은 강연 노트 만들기 팁을 서로 공유할 수 있는 플랫폼 기능을 추가하려고 합니다. Portfolio 페이지에서 사용했던 방식들과 더불어 댓글 기능도 추가할 것입니다.
+
+I plan to make a new platform where people share their own writing/speech tips. Along with techniques used in Portfolio page, writing comments will be added.
+
+<h4> 9.3. 데이터 재사용하기(use the final draft as input data) </h4>
+
+사용자가 여러 버전의 글 중에서 최종본을 제출하면 최종본을 input data로 넣어 자료를 꾸준히 업데이트하도록 만들 계획입니다.
+
+We will put data from final drafts for each user as a new data of Corpus.
