@@ -50,32 +50,32 @@ The core feature of this project is to collect data, refine, and provide them th
 
 
 <h3> 6. Acknowledgement </h3>
-To create secret keys, I read articles [here: ](https://pynative.com/python-secrets-module/)
+
+To create secret keys, I read articles [here: ](https://pynative.com/python-secrets-module/)<br>
 To make a register page, I watched youtube videos [here: ](https://www.youtube.com/playlist?list=PL-osiE80TeTs4UjLw5MM6OjgkjFeUxCYH) *Youtuber: Corey Schafer*
 
 <h3> 7. 사용 프로그램/Programs Used </h3>
-Programming Language - Python
-Web framework - Flask
-Toolkit for flask - sqlalchemy
-Client side - MDBootstrap
-Cloud - GCP
 
-Trello 
-https://trello.com/b/GtXR1mwS/corpus-boards
+Programming Language - Python<br>
+Web framework - Flask<br>
+Toolkit for flask - sqlalchemy<br>
+Client side - MDBootstrap<br>
+Cloud - GCP<br>
+Trello - You can visit my trello [here](https://trello.com/b/GtXR1mwS/corpus-boards)
 
 <h3> 8. 해야할 일/To be improved </h3>
-<h4> 9.1. 검색 엔진 (elasticsearch)</h4>
-  
+
+<h4> 8.1. 검색 엔진 (elasticsearch)</h4>
+
 지금은 검색 결과를 도출해내는 함수를 사용하고 있지만 검색어로 들어올 수 있는 단어/구문에 제약이 있습니다. 예를 들어 영어의 경우 첫 단어가 대문자냐 소문자냐를 구분하지 않기 위해서 정규식을 사용했지만, 검색 엔진을 사용하면 대소문자 구분뿐만 아니라 NLP등을 이용해 띄어쓰기나 동/명사의 기본형으로 변환시켜주는 검색 엔진을 사용하려 합니다.
 
-<h4> 9.2. 플랫폼 만들기(platform for sharing tips) </h4>
+<h4> 8.2. 플랫폼 만들기(platform for sharing tips) </h4>
 
 글쓰기 혹은 강연 노트 만들기 팁을 서로 공유할 수 있는 플랫폼 기능을 추가하려고 합니다. Portfolio 페이지에서 사용했던 방식들과 더불어 댓글 기능도 추가할 것입니다.
 
 I plan to make a new platform where people share their own writing/speech tips. Along with techniques used in Portfolio page, writing comments will be added.
 
-<h4> 9.3. 데이터 재사용하기(use the final draft as input data) </h4>
-
+<h4> 8.3. 데이터 재사용하기(use the final draft as input data) </h4>
 사용자가 여러 버전의 글 중에서 최종본을 제출하면 최종본을 input data로 넣어 자료를 꾸준히 업데이트하도록 만들 계획입니다.
 
 We will put data from final drafts for each user as a new data of Corpus.
