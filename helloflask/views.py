@@ -322,13 +322,35 @@ def postingcompare():
         return redirect('/login')
     htmls = request.json
     # for i in htmls['1']:
-    pattern = re.compile('\.\s')
-    html_1 = re.sub(pattern, '.\n', htmls['1'])
-    html_2 = re.sub(pattern, '.\n', htmls['2'])
-    htm_1 = html_1.splitlines()
-    htm_2 = html_2.splitlines()
+    def diff(html):
+        pattern = re.compile('\.\s')
+        aa = re.sub(pattern, '.\n', html)
+        xx = aa.split("\n")
+        yy = []
+        for h in xx:
+            if len(h)>= 200 and len(h)<400:
+                idx = h.index(',')
+                if idx == None:
+                    h_1 = h[0:199]
+                    h_2 = h[199:]
+                else:
+                    h_1 = h[0:idx+1]
+                    h_2 = h[idx+1:]
+                yy.append(h_1)
+                yy.append(h_2)
+            else:
+                yy.append(h)
+        return yy
+
+    h1 = diff(htmls['1'])
+
+    h2 = diff(htmls['2'])
+
     d2 = difflib.HtmlDiff()
-    diffHtml = d2.make_file(htm_1, htm_2)
+    diffHtml = d2.make_file(h1, h2)
+    # diffHtml = d2.make_file(htm_1, htm_2)
+    # print("\n\n\n\n htm_1>>>>> ", htm_1)
+    # print("\n\n\n\n htm_2>>>>> ", htm_2)
     # print(diffHtml)
     return jsonify({'HTML':diffHtml})
     

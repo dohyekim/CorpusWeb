@@ -5,9 +5,9 @@ def send_email(to, subject, msg):
         server = smtplib.SMTP('smtp.gmail.com:587')
         server.ehlo()
         server.starttls()
-        pwd = 'zfvliqmiwsmhieuj'
+        pwd = 'pwd'
         pwd.encode('utf-8')
-        email = 'logforyou.kjm@gmail.com'
+        email = 'idid'
         email.encode('utf-8')
         server.login(email, pwd)
         message = 'Subject: {}\n\n{}'.format(subject, msg)

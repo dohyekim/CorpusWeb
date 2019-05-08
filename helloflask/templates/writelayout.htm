@@ -126,13 +126,7 @@ var chcktemplate;
 var nametemplate;
 var loadtemplate;
 
-document.addEventListener('keydown', function(event) {
-    if (event.keyCode === 9) {
-        event.preventDefault();
-        event.srcElement.defaultValue = '    '
-        console.log(event)
-    }
-}, true);
+
 
 
 loadCheckData('loadChcklist', '/checklist/{{userid}}', 'namelist')

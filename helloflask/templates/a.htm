@@ -212,3 +212,12 @@ def get_conn():
         port=3306,
         db='corpusdb',
         charset='utf8')
+
+
+        document.addEventListener('keydown', function(event) {
+          if (event.keyCode === 9) {
+              event.preventDefault();
+              event.srcElement.defaultValue = '    '
+              console.log(event)
+          }
+      }, true);

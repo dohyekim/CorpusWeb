@@ -70,22 +70,22 @@
       </div>
       <!--Grid row-->
           
-    <!--Card-->
-    <div class="row">
-      <div class="col-lg-8 card mb-4 wow fadeIn">
-        <!--Card content-->
-        <div class="col-lg-12 card-body">
-          <p class="h5 my-4">비교</p>
-          <p id="compare-content">비교하고 싶은 글을 최대 2개 선택해주세요.</p>
+      <!--Card-->
+      <div class="row">
+        <div class="col-lg-8 card mb-4 wow fadeIn">
+          <!--Card content-->
+          <div class="card-body px-0">
+            <p class="h5 my-4">비교</p>
+            <p id="compare-content">비교하고 싶은 글을 최대 2개 선택해주세요.</p>
+          </div>
         </div>
-      </div>
-      <!--/.Card-->
-      <!-- Card -->
-      <div class="card col-4 ml-4 h-auto">
+        <!--/.Card-->
+        <!-- Card -->
+        <div class="card col-lg-3 mb-4 ml-4 h-auto">
           <!-- Card content -->
-          <div class="card-body">
+          <div class="card-body px-3">
             <!-- Title -->
-            <div class="md-form" id="hideInput">
+            <div class="md-form row" id="hideInput">
               <h4 class="card-title"> 
               <i class="fas fa-user prefix"></i>
               <input type="text" id="newchecklist" class="form-control">
@@ -102,38 +102,34 @@
                 <i class="fas fa-user prefix"></i>
                 <input type="text" id="newcheck" class="form-control">
                 <label for="newcheck">추가하기</label>
-                </div>
+              </div>
                 <button type="button" id="newcheckbtn" class="btn btn-sm btn-default px-3 text-right">
                   <i class="fas fa-plus" aria-hidden="true"></i>
                 </button>
-              </div>
-              <div id="checkarea">
-
-              </div>
             </div>
+            <div id="checkarea">
+
+            </div>
+          </div>
 
 
-            <div class="container">
-                <button id="savebtn" type="button" class="btn btn-sm btn-default float-right">
-                    저장하기
-                </button>
-              <div>
-                <button id="newbtn" class="btn btn-sm btn-primary px-3 float-right" style="display:none" type="button" >새로 만들기</button>
-              </div>
+          <div class="container">
+              <button id="savebtn" type="button" class="btn btn-sm btn-default float-right">
+                  저장하기
+              </button>
+            <div>
+              <button id="newbtn" class="btn btn-sm btn-primary px-3 float-right" style="display:none" type="button" >새로 만들기</button>
             </div>
           </div>
         </div>
-      </div> 
-    </div>
+      </div>
     </section>
-  </div>
+  </div> 
     <!--Section: Post-->
 </main>
 <!--Main layout-->
 
 <script>
-
-
 
 Handlebars.registerHelper('numbering', function(num) {
   return num + 1
@@ -308,8 +304,8 @@ function comparetwo() {
       $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table').removeAttr('border')
       $('table[id]').attr('align','center')
       $('table[summary]').attr('align','right')
-      $('p#compare-content table td').addClass('compTable')
-      $('p#compare-content table td').removeAttr('nowrap')
+      $('p#compare-content table.diff td').removeAttr('nowrap')
+      $('table.diff td').attr("style","word-break:break-all")
   })
 }
 
