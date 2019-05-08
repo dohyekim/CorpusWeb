@@ -10,10 +10,9 @@ from helloflask.forms import RegistrationForm, PostForm
 import difflib
 from helloflask.email import send_email
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-import re
+from helloflask.functions import diff
 
 # import json
-
 @app.route("/notes")
 def notes():
     if session.get('loginUser'):
@@ -274,7 +273,8 @@ def postwrite():
     # if select:
     print("ccc>> ", content)
     print("title>> ", title)
-    post = Post(title, content, loginUser.get('userid'))
+    print("userid>>", userid)
+    post = Post(title, content, userid)
 
     try:
         db_session.add(post)
@@ -321,37 +321,10 @@ def postingcompare():
     if not session.get('loginUser'):
         return redirect('/login')
     htmls = request.json
-    # for i in htmls['1']:
-    def diff(html):
-        pattern = re.compile('\.\s')
-        aa = re.sub(pattern, '.\n', html)
-        xx = aa.split("\n")
-        yy = []
-        for h in xx:
-            if len(h)>= 200 and len(h)<400:
-                idx = h.index(',')
-                if idx == None:
-                    h_1 = h[0:199]
-                    h_2 = h[199:]
-                else:
-                    h_1 = h[0:idx+1]
-                    h_2 = h[idx+1:]
-                yy.append(h_1)
-                yy.append(h_2)
-            else:
-                yy.append(h)
-        return yy
-
     h1 = diff(htmls['1'])
-
     h2 = diff(htmls['2'])
-
     d2 = difflib.HtmlDiff()
     diffHtml = d2.make_file(h1, h2)
-    # diffHtml = d2.make_file(htm_1, htm_2)
-    # print("\n\n\n\n htm_1>>>>> ", htm_1)
-    # print("\n\n\n\n htm_2>>>>> ", htm_2)
-    # print(diffHtml)
     return jsonify({'HTML':diffHtml})
     
 
