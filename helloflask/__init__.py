@@ -6,13 +6,13 @@ import os
 sKey = os.environ['sKey']
 app = Flask(__name__)
 import helloflask.views
-app.debug = True
+app.debug = False
 
 app.config.update(
 	# salt
     SECRET_KEY=sKey,
 	SESSION_COOKIE_NAME='corpus_flask_session',
-	PERMANENT_SESSION_LIFETIME=timedelta(31)      # 31 days
+	PERMANENT_SESSION_LIFeETIME=timedelta(31)      # 31 days
 )
 
 def dated_url_for(endpoint, **values):
