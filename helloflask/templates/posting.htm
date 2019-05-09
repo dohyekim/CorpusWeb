@@ -72,7 +72,7 @@
           
       <!--Card-->
       <div class="row">
-        <div class="col-lg-12 card mb-4 wow fadeIn">
+        <div class="col-lg-9 card mb-4 wow fadeIn">
           <!--Card content-->
           <div class="card-body px-0">
             <p class="h5 my-4">비교</p>
@@ -81,7 +81,7 @@
         </div>
         <!--/.Card-->
         <!-- Card -->
-        <div class="fixed col-lg-3 mb-4 ml-4 h-auto" style="display:none">
+        <div class="card col-lg-2 mb-4 ml-4" style="position:sticky; right:50px; top:100px;height:20em; width:20px;">
 
 
 
@@ -289,7 +289,6 @@ function comparetwo() {
     return
   }
   else {
-    $('div.fixed').css('display','block')
     var i;
     for (i in chckcnt) {
       console.log("iiiiiii", i)
@@ -315,8 +314,15 @@ function comparetwo() {
       $('#compare-content > table:nth-child(5) > tbody > tr:nth-child(2) > td:nth-child(1) > table').removeAttr('border')
       $('table[id]').attr('align','center')
       $('table[summary]').attr('align','right')
+      $('table.diff[id]').wrap('<div id="tablediv">')
+      $('table.diff').addClass('table')
       $('p#compare-content table.diff td').removeAttr('nowrap')
-      $('table.diff td').attr("style","word-break:break-all")
+      $('table.diff.table colgroup').remove()
+      $('div#tablediv').attr("style","word-wrap:break-word;")
+      $('table.diff[id] td:nth-of-type(1)').attr('style','width:5%')
+      $('table.diff[id] td:nth-of-type(2)').attr('style','width:45%')
+      $('table.diff[id] td:nth-of-type(3)').attr('style','width:5%')
+      $('table.diff[id] td:nth-of-type(4)').attr('style','width:45%')
   })
 }
 

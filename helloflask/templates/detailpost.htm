@@ -40,7 +40,9 @@ $(document).ready( function() {
         var html = template(res);
         document.getElementById('postdetail').innerHTML = html;
         var c = $('#content')
-        c.html(c.text().trim().replace(/\n/g, '<br>'))            
+        console.log(res)
+        c.html(c.text().trim().replace(/\n/g, '<br>'))
+        c.html('<pre>' + res.content +'</pre')             
     })
 })
 

@@ -2,8 +2,8 @@ from flask import Flask, render_template, url_for
 from datetime import timedelta
 from helloflask.init_db import init_database, db_session
 import os
-from helloflask.pwd import sKey
 
+sKey = os.environ['sKey']
 app = Flask(__name__)
 import helloflask.views
 app.debug = True

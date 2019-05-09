@@ -1,6 +1,7 @@
 import pymysql
-from helloflask.pwd import passwd
+import os
 
+passwd=os.environ['passwd']
 def get_conn():
     return pymysql.connect(
         host='35.200.21.188',
