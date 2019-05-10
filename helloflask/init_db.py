@@ -1,12 +1,14 @@
 from sqlalchemy import create_engine, Table, Column
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-import os
 
-passwd = os.environ['passwd']
-#"mysql+pymysql://dooo:1234@127.0.0.1:3307/corpusdb?charset=utf8"
+# import os
+# passwd = os.environ['passwd']
+# mysql+pymysql://root:" + passwd + "@35.200.21.188/corpusdb?charset=utf8
+
+
 # Declare connection
-mysql_url = "mysql+pymysql://root:" + passwd + "@35.200.21.188/corpusdb?charset=utf8"
+mysql_url = "mysql+pymysql://dooo:1234@127.0.0.1:3307/corpusdb?charset=utf8"
 engine = create_engine(mysql_url, echo=True, convert_unicode=True)
 
 # Declare & create Session

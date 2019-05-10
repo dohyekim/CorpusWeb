@@ -41,8 +41,10 @@ $(document).ready( function() {
         document.getElementById('postdetail').innerHTML = html;
         var c = $('#content')
         console.log(res)
-        c.html(c.text().trim().replace(/\n/g, '<br>'))
-        c.html('<pre>' + res.content +'</pre')             
+        var a = c.text().trim().replace(/\n/g, '<br>') 
+        c.html(a)
+        c.text(c.replace(/'    '/, '\t'))
+        
     })
 })
 
