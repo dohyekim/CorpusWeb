@@ -81,7 +81,7 @@ class ElasticSearch():
                     # print(sentence)
                     sentences = {'foresentence' : foresentence, 'sentence':sentence, 'lastsentence' : lastsentence}
                     engsentences.append(sentences)
-        print("engsentences>>>>>>", engsentences)
+        # print("engsentences>>>>>>", engsentences)
 
         return engsentences        
 
@@ -148,11 +148,11 @@ class ElasticSearch():
             show['title'] = tagrows[0][0]
             show['speaker'] = tagrows[0][2]
             tshows.append(show)
-            tshowss = sorted(tshows, key = lambda t:t['number'], reverse=True)
+            tshows = sorted(tshows, key = lambda t:t['number'], reverse=True)
             n+=1
-        print(tshowss)
+        print(tshows)
 
-        return tshowss
+        return tshows
 
     def kortoEng(self, search):
         self.kortalk = []

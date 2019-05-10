@@ -46,10 +46,10 @@
                 <button id="essearch" class="btn btn-md btn-secondary ml-4 m-0 px-3" type="button" >검색</button>
             </div>
             <div class="w-100"></div>
-            <div id="efcount" class="col">개</div>
-            <div id="efresult" class="col">Searchresult</div>    
-            <div id="escount" class="col">개</div>
-            <div id="esresult" class="col">Searchresult</div>     
+            <div id="efcount" style="width:5%">개</div>
+            <div id="efresult" style="width:45%">Searchresult</div>    
+            <div id="escount" style="width:5%">개</div>
+            <div id="esresult" style="width:45%">Searchresult</div>     
         </div>
     <!-- 영/한 검색 결과 -->
               <div class="container text-center">
@@ -65,51 +65,31 @@
   
         {% raw %}
         <script id="entry-template" type="text/x-handlebars-template">
-          <ol type="1">
+          <ul>
               {{#each data}}
             <div>
               <li>
-                  <div class="text-left">
+                  <div class="container text-left">
                     {{#if korsentences}}
                         {{korsentences}} 
                     {{else}}
                         {{engsentences}}
                     {{/if}}
-                    <br> 
+                    <br>
+                    <br>
                     {{result}}
+                    <br>
+                    <br>
                   </div>
               </li>
             </div>
             {{/each}}
-          </ol>
+          </ul>
         </script>
         {% endraw %}
   
   
-          <!--Pagination-->
-          <nav class="d-flex justify-content-center wow fadeIn">
-            <ul class="pagination pg-blue">
-  
-              <!--Arrow left-->
-              <li class="page-item disabled">
-                <a class="page-link" href="#" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-  
-              <li class="page-item active">
-                <a class="page-link" href="#">현재</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-          <!--Pagination-->
+
   
   
   
@@ -117,13 +97,12 @@
     </main>
     <!--Main layout-->  
 <script>
-    var currentData = null;
     var dataTemplate = null;
  
     function hbs(sourceId, data, resultId) {
         var source = document.getElementById(sourceId).innerHTML;
         var template = Handlebars.compile(source);
-        if (resultId === 'kfresult'){
+        if (resultId === 'efresult | esresult'){
             dataTemplate = template;
         }
         else {
@@ -141,6 +120,7 @@
     // foreRes 
 
     $('#efsearch').click( function() {
+      var currentData = null;
         var cnt = null;
         var s = $('#efsearchwords').val();
         if (!s) {
@@ -152,14 +132,20 @@
             type: 'GET'
         }).done(function(data) {
             console.log("data>>>>>", data)
+
             var cnt = data.length;
             var cntt = $('#efcount');
+            if (data['result']) {
+              cntt.text('0개')
+            }
+            else {
             cntt.text(cnt + '개')
+            }
             console.log("1 cnt>>>>>>>", cnt)
             console.log("length>>>", data.length)
             currentData = data;
             // data:currentData
-            hbs("entry-template", {data:currentData}, 'efresult')
+            hbs("entry-template", {'data':data}, 'efresult')
         }).fail(function(res) {
             console.log("Error!!", res)
         });
@@ -179,10 +165,20 @@
             url: '/engsearch/' + s,
             type: 'GET'
         }).done(function(data) {
-            console.log("data>>>>>", data)
-            console.log("length>>>", data.length)
-            currentData = data;
-            hbs("entry-template", {data:currentData}, 'esresult')
+          console.log("data>>>>>", data)
+
+          var cnt = data.length;
+          var cntt = $('#escount');
+          if (data['result']) {
+            cntt.text('0개')
+          }
+          else {
+          cntt.text(cnt + '개')
+          }
+          console.log("1 cnt>>>>>>>", cnt)
+          console.log("length>>>", data.length)
+          currentData = data;
+            hbs("entry-template", {'data':data}, 'esresult')
         }).fail(function(res) {
             console.log("Error!!", res)
         })

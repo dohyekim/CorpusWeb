@@ -6,7 +6,7 @@ import os
 sKey = os.environ['sKey']
 app = Flask(__name__)
 import helloflask.views
-app.debug = False
+app.debug = True
 
 app.config.update(
 	# salt

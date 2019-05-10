@@ -440,12 +440,18 @@ def compare():
 def ksearchjson(searchwords):
     s = ElasticSearch()
     searchres = s.kortoEngequiv(searchwords)
-    return jsonify(searchres)
+    if len(searchres) != 0:
+        return jsonify(searchres)
+    else:
+        return jsonify({'result':'none'})
 
 
 @app.route('/engsearch/<searchwords>')
 def esearchjson(searchwords):
     s = ElasticSearch()
     searchres = s.engtoKorequiv(searchwords)
-    return jsonify(searchres)
+    if len(searchres) != 0:
+        return jsonify(searchres)
+    else:
+        return jsonify({'result':'none'})
 
